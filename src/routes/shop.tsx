@@ -1,0 +1,202 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { featured } from "@/lib/products";
+import { PageHeader } from "@/components/PageHeader";
+import { CheckCircle, Plus, Star, X } from "lucide-react";
+import { useCart } from "@/lib/cart";
+import { toast } from "sonner";
+import single from "@/assets/chrome-typec-single.png";
+import hero from "@/assets/chrome-typec-hero.png";
+import jack from "@/assets/chrome-typec.png";
+import a from "@/assets/chrome-ist.png";
+import b from "@/assets/chrome-3rd.png";
+import c from "@/assets/chrome-iind.png";
+import { type ReactNode, useState } from "react";
+
+export const Route = createFileRoute("/shop")({
+  head: () => ({ meta: [{ title: "Shop — GoChrome" }, { name: "description", content: "Browse the GoChrome lineup of premium audio products." }] }),
+  component: Shop,
+});
+
+const productDetails = [
+  {
+    q: "Description",
+    a: (
+      <div className="space-y-4">
+        <p>Meet the earbuds that refuse to blend in.</p>
+        <p>
+          Meet the earphones that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
+        </p>
+        <p>
+          These earphones are engineered to deliver clear vocals, balanced sound, and deep bass, making every song, video, and call sound crisp and immersive. The ergonomic shape sits comfortably in your ears for extended listening, while the lightweight design ensures they feel as good as they look.The durable cable and USB-C connector provide reliable compatibility with most modern smartphones, tablets, and laptops, so you can plug in and enjoy high-quality audio wherever you go.
+        </p>
+        <p>Whether they're around your neck, in your hand, or plugged in on the go, these earbuds were made to be noticed.</p>
+      </div>
+    ),
+  },
+  {
+    q: "How's the sound quality?",
+    a: "Chrome Earphones deliver clear vocals, deep bass, and balanced sound, making your music, calls, movies, and everyday listening more enjoyable than ever before.",
+  },
+  {
+    q: "Is there a built-in mic?",
+    a: "Yes. Chrome Earphones include a built-in microphone for clear calls, voice notes, online classes, and everyday conversations while staying connected.",
+  },
+  {
+    q: "7-Day Return & Refund Policy",
+    a: "Try your Chrome Earphones risk-free for 7 days. If you're not satisfied, return them in original condition for a full refund.",
+  },
+];
+
+function Shop() {
+  const [selectedBundle, setSelectedBundle] = useState("buy1");
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [openDetail, setOpenDetail] = useState("Description");
+  const { add } = useCart();
+  const nav = useNavigate();
+  
+  const images = [single, hero, jack, a, b, c];
+  const selectedQty = selectedBundle === "buy2" ? 2 : 1;
+  const selectedTotal = selectedBundle === "buy2" ? Math.round(featured.price * 1.75) : featured.price;
+  const selectedUnitPrice = selectedTotal / selectedQty;
+  const selectedItem = {
+    id: `${featured.id}-${selectedBundle}`,
+    name: selectedBundle === "buy2" ? `${featured.name} - Buy 2` : featured.name,
+    price: selectedUnitPrice,
+    image: featured.image,
+  };
+  
+  const handleAddToBag = () => {
+    add(selectedItem, selectedQty);
+    toast.success("Added to bag");
+  };
+  
+  const handleBuyNow = () => {
+    add(selectedItem, selectedQty);
+    toast.success("Added to bag. Proceeding to checkout...");
+    nav({ to: "/checkout" });
+  };
+
+  return (
+    <>
+      <PageHeader eyebrow="Shop" title="Chrome Earphones" />
+      <section className="mx-auto max-w-7xl px-6 pb-24">
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div>
+            <div className="relative glow-stage aspect-square flex items-center justify-center bg-background p-6">
+              <img src={images[selectedImage]} alt={featured.name} loading="lazy" className="w-[92%] h-[92%] object-contain" />
+            </div>
+            <div className="mt-4 flex gap-2">
+              {images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(idx)}
+                  className={`w-20 h-20 rounded-lg border-2 overflow-hidden transition ${
+                    selectedImage === idx ? "border-chrome" : "border-border"
+                  }`}
+                >
+                  <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-foreground text-foreground" />)}
+              <span className="text-sm text-muted-foreground ml-2">Rated 4.9 (400 Reviews)</span>
+            </div>
+            <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
+            <div className="mt-6 flex items-baseline gap-2">
+              <span className="text-3xl font-bold">₹{featured.price.toLocaleString("en-IN")}</span>
+              <span className="text-lg text-muted-foreground line-through">₹{Math.round(featured.price * 1.8).toLocaleString("en-IN")}</span>
+              <span className="text-sm font-semibold text-chrome">SAVE 44%</span>
+            </div>
+            <div className="mt-6 flex flex-col gap-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
+                <p className="text-sm">Crystal Clear Sound</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
+                <p className="text-sm">Premium Chrome Finish</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
+                <p className="text-sm">Built for Daily Use</p>
+              </div>
+            </div>
+            <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm font-medium text-yellow-900">⚫ LOW STOCK, READY TO BE SHIPPED</p>
+              <p className="text-xs text-yellow-700 mt-1">Limited Edition - Almost Sold Out</p>
+            </div>
+            <div className="mt-8 space-y-3">
+              <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
+                <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
+                <div className="ml-4 flex-1">
+                  <p className="font-semibold">Buy 1 <span className="text-xs text-muted-foreground font-normal ml-2">MOST POPULAR</span></p>
+                  <p className="text-sm text-muted-foreground">You save 44%</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold">₹{featured.price.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{Math.round(featured.price * 1.8).toLocaleString("en-IN")}</p>
+                </div>
+              </label>
+              <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
+                <input type="radio" name="bundle" value="buy2" checked={selectedBundle === "buy2"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
+                <div className="ml-4 flex-1">
+                  <p className="font-semibold">Buy 2 <span className="text-xs text-muted-foreground font-normal ml-2">BEST DEAL</span></p>
+                  <p className="text-sm text-muted-foreground">You save 55%</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold">₹{Math.round(featured.price * 1.75).toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{Math.round(featured.price * 3.9).toLocaleString("en-IN")}</p>
+                </div>
+              </label>
+            </div>
+            <div className="mt-8 flex gap-3">
+              <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
+                Buy Now
+              </button>
+              <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
+                To Bag
+              </button>
+            </div>
+            <div className="mt-6 border-y border-border">
+              {productDetails.map((item) => (
+                <ProductDetail
+                  key={item.q}
+                  title={item.q}
+                  open={openDetail === item.q}
+                  onToggle={() => setOpenDetail(openDetail === item.q ? "" : item.q)}
+                >
+                  {item.a}
+                </ProductDetail>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ProductDetail({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="border-b border-border last:border-b-0">
+      <button onClick={onToggle} className="flex w-full items-center justify-between gap-4 py-4 text-left">
+        <span className="text-sm font-medium">{title}</span>
+        {open ? <X className="h-4 w-4 shrink-0" /> : <Plus className="h-5 w-5 shrink-0" />}
+      </button>
+      {open && <div className="pb-5 pr-4 text-sm leading-7 text-foreground/85">{children}</div>}
+    </div>
+  );
+}
