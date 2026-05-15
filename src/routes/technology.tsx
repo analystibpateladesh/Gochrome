@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader, Prose } from "@/components/PageHeader";
 import tech from "@/assets/chrome-exploded.png";
+import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/technology")({
   head: () => ({ meta: [{ title: "Technology — GoChrome" }] }),
@@ -18,6 +19,13 @@ export const Route = createFileRoute("/technology")({
         <p>Durable Construction: Reinforced cables and sturdy connectors are built to handle daily use. From your commute to your workspace, Chrome earphones are made to perform reliably.</p>
         <p>Built for Everyday Listening: Designed for smartphones, tablets, and laptops, Chrome earphones deliver excellent sound quality and dependable performance wherever you go.</p>
       </Prose>
+      <section className="mx-auto max-w-4xl px-6 py-32 text-center">
+        <h2 className="text-4xl md:text-6xl font-semibold tracking-tight">Ready to listen?</h2>
+        <p className="mt-4 text-muted-foreground text-lg">Order now. Free shipping.</p>
+        <Link to="/shop" className="mt-8 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 inline-flex items-center gap-2">
+          Reserve yours <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
     </>
   ),
 });

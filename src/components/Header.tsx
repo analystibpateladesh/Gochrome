@@ -3,7 +3,7 @@ import { useTheme } from "@/lib/theme";
 import { useCart } from "@/lib/cart";
 import { Moon, Sun, ShoppingBag, Menu, X } from "lucide-react";
 import { useState } from "react";
-import logo from "@/assets/chromatics-logo.jpeg";
+import logo from "@/assets/gochrome-wordmark.png";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -21,10 +21,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border">
-      <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="GoChrome" className="h-8 w-8 object-contain dark:invert" />
-          <span className="font-display font-semibold tracking-widest text-sm">GoChrome</span>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
+        <Link to="/" className="flex min-w-0 items-center" aria-label="GoChrome home">
+          <img src={logo} alt="GoChrome" className="h-9 w-40 object-contain object-left mix-blend-multiply dark:invert sm:h-10 sm:w-48" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

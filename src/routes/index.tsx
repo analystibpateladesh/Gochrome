@@ -76,13 +76,13 @@ function Home() {
           </div>
         </div>
 
-        <div className="relative px-6 pb-24 glow-stage">
+        <div className="relative -mb-16 px-6 pb-0 md:-mb-24 glow-stage">
           <img src={hero} alt="Chrome Earphones" className="relative mx-auto max-w-4xl w-full object-contain animate-float drop-shadow-[0_50px_70px_rgba(0,0,0,0.45)]" width={1920} height={1080} />
         </div>
       </section>
 
       {/* FEATURE STRIP */}
-      <section className="border-y border-border bg-card">
+      <section className="relative z-10 border-y border-border bg-card">
         <div className="mx-auto max-w-7xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { icon: Headphones, l: "Hybrid Driver", v: "Dual BA + DD" },

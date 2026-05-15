@@ -62,17 +62,19 @@ function Checkout() {
       const razorpayOrder = (await orderResponse.json()) as RazorpayOrder;
 
       const paymentHandler = async (response: RazorpayResponse) => {
+        const verifyResponse = await fetch("/api/verify-razorpay-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(response),
+        });
+
+        if (!verifyResponse.ok) {
+          setLoading(false);
+          toast.error("Payment verification failed. Check RAZORPAY_KEY_SECRET in Vercel.");
+          return;
+        }
+
         try {
-          const verifyResponse = await fetch("/api/verify-razorpay-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          });
-
-          if (!verifyResponse.ok) {
-            throw new Error("Razorpay payment verification failed.");
-          }
-
           await saveToGoogleSheets({
             type: "order",
             orderId,
@@ -99,8 +101,9 @@ function Checkout() {
           clear();
           toast.success("Payment successful. Your order has been placed.");
           nav({ to: "/" });
-        } catch {
-          toast.error("Payment worked, but order saving failed. Please email gochromeaudio@gmail.com.");
+        } catch (error) {
+          console.error(error);
+          toast.error("Payment worked, but order was not saved. Check VITE_ORDERS_SHEETS_WEB_APP_URL in Vercel.");
         } finally {
           setLoading(false);
         }

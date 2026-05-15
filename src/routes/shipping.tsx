@@ -23,18 +23,10 @@ export const Route = createFileRoute("/shipping")({
 
         <h2 className="text-2xl font-semibold text-foreground">Returns & Refunds</h2>
         <h3 className="text-lg font-semibold text-foreground">7-Day Return & Refund Policy</h3>
-        <p>We offer a 7-day return and refund policy from the date your order is delivered.</p>
-        <p>If you are not satisfied with your purchase, you may request a return within 7 days of delivery.</p>
-        <h3 className="text-lg font-semibold text-foreground">Return Requirements</h3>
-        <p>To be eligible for a return or refund:</p>
-        <ul className="list-disc space-y-2 pl-6">
-          <li>The product must be in its original condition.</li>
-          <li>All original packaging and accessories must be included.</li>
-          <li>The product must not be damaged due to misuse.</li>
-          <li>You must record a clear, uncut video while opening the package.</li>
-          <li>The unboxing video must show the sealed package being opened and clearly display any defect, damage, or issue with the product.</li>
-          <li>Return and refund requests without a valid unboxing video may not be accepted.</li>
-        </ul>
+        <p>Returns and refunds are only available for products that arrive damaged or defective.</p>
+        <p>To be eligible for a return or refund, you must record a complete unboxing video from the moment the sealed package is opened until the product is fully inspected.</p>
+        <p>Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.</p>
+        <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
         <h3 className="text-lg font-semibold text-foreground">How to Request a Return or Refund</h3>
         <p>To initiate a return or refund, email us at gochromeaudio@gmail.com with the following details:</p>
         <ul className="list-disc space-y-2 pl-6">

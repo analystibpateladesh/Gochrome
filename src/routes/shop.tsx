@@ -5,12 +5,20 @@ import { CheckCircle, Plus, Star, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
 import single from "@/assets/chrome-typec-single.png";
-import hero from "@/assets/chrome-typec-hero.png";
 import jack from "@/assets/chrome-typec.png";
 import a from "@/assets/chrome-ist.png";
 import b from "@/assets/chrome-3rd.png";
 import c from "@/assets/chrome-iind.png";
-import { type ReactNode, useState } from "react";
+import heart from "@/assets/chrome-heart.png";
+import video from "@/assets/chrome_video.mp4";
+import { type ReactNode, useState, useEffect } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({ meta: [{ title: "Shop — GoChrome" }, { name: "description", content: "Browse the GoChrome lineup of premium audio products." }] }),
@@ -43,7 +51,16 @@ const productDetails = [
   },
   {
     q: "7-Day Return & Refund Policy",
-    a: "Try your Chrome Earphones risk-free for 7 days. If you're not satisfied, return them in original condition for a full refund.",
+    a:(
+      <div className="space-y-4">
+        <p>
+          Returns and refunds are only available for products that arrive damaged or defective.</p>
+        <p>
+          To be eligible for a return or refund, you must record a complete unboxing video from the moment the sealed package is opened until the product is fully inspected. Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.
+        </p>
+        <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
+      </div>
+    ),
   },
 ];
 
@@ -51,10 +68,36 @@ function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
   const [selectedImage, setSelectedImage] = useState(0);
   const [openDetail, setOpenDetail] = useState("Description");
+  const [api, setApi] = useState<any>();
   const { add } = useCart();
   const nav = useNavigate();
   
-  const images = [single, hero, jack, a, b, c];
+  const media = [
+    { type: "image", src: b },
+    { type: "image", src: c },
+    { type: "image", src: a },
+    { type: "image", src: single },
+    { type: "image", src: jack },
+    { type: "image", src: heart },
+    { type: "video", src: video },
+  ];
+  
+  useEffect(() => {
+    if (!api) return;
+    
+    const onSelect = () => {
+      setSelectedImage(api.selectedScrollSnap());
+    };
+    
+    api.on("select", onSelect);
+    return () => api.off("select", onSelect);
+  }, [api]);
+  
+  const handleThumbnailClick = (idx: number) => {
+    if (api) {
+      api.scrollTo(idx);
+    }
+  };
   const selectedQty = selectedBundle === "buy2" ? 2 : 1;
   const selectedTotal = selectedBundle === "buy2" ? Math.round(featured.price * 1.75) : featured.price;
   const selectedUnitPrice = selectedTotal / selectedQty;
@@ -79,33 +122,67 @@ function Shop() {
   return (
     <>
       <PageHeader eyebrow="Shop" title="Chrome Earphones" />
-      <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          <div>
-            <div className="relative glow-stage aspect-square flex items-center justify-center bg-background p-6">
-              <img src={images[selectedImage]} alt={featured.name} loading="lazy" className="w-[92%] h-[92%] object-contain" />
+      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
+        <div className="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
+          <div className="min-w-0">
+            <div className="relative glow-stage aspect-square flex items-center justify-center bg-background p-3 sm:p-6">
+              <Carousel className="w-full" setApi={setApi}>
+                <CarouselContent>
+                  {media.map((item, idx) => (
+                    <CarouselItem key={idx}>
+                      <div className="flex items-center justify-center h-full">
+                        {item.type === "image" ? (
+                          <img 
+                            src={item.src} 
+                            alt={featured.name} 
+                            loading="lazy" 
+                            className="w-[92%] h-[92%] object-contain" 
+                          />
+                        ) : (
+                          <video 
+                            src={item.src} 
+                            controls 
+                            className="w-[92%] h-[92%] object-contain"
+                            preload="metadata"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        )}
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </Carousel>
             </div>
-            <div className="mt-4 flex gap-2">
-              {images.map((img, idx) => (
+            <div className="mt-4 flex flex-nowrap gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center">
+              {media.map((item, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`w-20 h-20 rounded-lg border-2 overflow-hidden transition ${
+                  onClick={() => handleThumbnailClick(idx)}
+                  className={`h-14 w-14 shrink-0 rounded-lg border-2 overflow-hidden transition sm:h-20 sm:w-20 ${
                     selectedImage === idx ? "border-chrome" : "border-border"
                   }`}
                 >
-                  <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                  {item.type === "image" ? (
+                    <img src={item.src} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs text-gray-600">Video</span>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
               {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-foreground text-foreground" />)}
               <span className="text-sm text-muted-foreground ml-2">Rated 4.9 (400 Reviews)</span>
             </div>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
-            <div className="mt-6 flex items-baseline gap-2">
+            <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{featured.price.toLocaleString("en-IN")}</span>
               <span className="text-lg text-muted-foreground line-through">₹{Math.round(featured.price * 1.8).toLocaleString("en-IN")}</span>
               <span className="text-sm font-semibold text-chrome">SAVE 44%</span>
@@ -131,7 +208,7 @@ function Shop() {
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
                 <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
-                <div className="ml-4 flex-1">
+                <div className="ml-4 min-w-0 flex-1">
                   <p className="font-semibold">Buy 1 <span className="text-xs text-muted-foreground font-normal ml-2">MOST POPULAR</span></p>
                   <p className="text-sm text-muted-foreground">You save 44%</p>
                 </div>
@@ -142,7 +219,7 @@ function Shop() {
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
                 <input type="radio" name="bundle" value="buy2" checked={selectedBundle === "buy2"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
-                <div className="ml-4 flex-1">
+                <div className="ml-4 min-w-0 flex-1">
                   <p className="font-semibold">Buy 2 <span className="text-xs text-muted-foreground font-normal ml-2">BEST DEAL</span></p>
                   <p className="text-sm text-muted-foreground">You save 55%</p>
                 </div>
@@ -152,7 +229,7 @@ function Shop() {
                 </div>
               </label>
             </div>
-            <div className="mt-8 flex gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
                 Buy Now
               </button>
