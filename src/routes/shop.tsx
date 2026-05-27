@@ -64,7 +64,12 @@ const productDetails = [
   },
 ];
 
+const buyOnePrice = 699;
+const buyTwoPrice = 1225;
 const singleProductMrp = 1499;
+const buyTwoMrp = singleProductMrp * 2;
+const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
+const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
@@ -101,7 +106,7 @@ function Shop() {
     }
   };
   const selectedQty = selectedBundle === "buy2" ? 2 : 1;
-  const selectedTotal = selectedBundle === "buy2" ? Math.round(featured.price * 1.75) : featured.price;
+  const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
   const selectedUnitPrice = selectedTotal / selectedQty;
   const selectedItem = {
     id: `${featured.id}-${selectedBundle}`,
@@ -185,9 +190,9 @@ function Shop() {
             </div>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
-              <span className="text-3xl font-bold">₹{featured.price.toLocaleString("en-IN")}</span>
+              <span className="text-3xl font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</span>
               <span className="text-lg text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</span>
-              <span className="text-sm font-semibold text-chrome">SAVE 44%</span>
+              <span className="text-sm font-semibold text-chrome">SAVE {buyOneSavings}%</span>
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-start gap-3">
@@ -212,10 +217,10 @@ function Shop() {
                 <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
                 <div className="ml-4 min-w-0 flex-1">
                   <p className="font-semibold">Buy 1 <span className="text-xs text-muted-foreground font-normal ml-2">MOST POPULAR</span></p>
-                  <p className="text-sm text-muted-foreground">You save 44%</p>
+                  <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{featured.price.toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
                   <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
@@ -223,11 +228,11 @@ function Shop() {
                 <input type="radio" name="bundle" value="buy2" checked={selectedBundle === "buy2"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
                 <div className="ml-4 min-w-0 flex-1">
                   <p className="font-semibold">Buy 2 <span className="text-xs text-muted-foreground font-normal ml-2">BEST DEAL</span></p>
-                  <p className="text-sm text-muted-foreground">You save 55%</p>
+                  <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{Math.round(featured.price * 1.75).toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{Math.round(featured.price * 3.9).toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
             </div>
