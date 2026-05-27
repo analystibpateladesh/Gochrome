@@ -4,7 +4,7 @@ import { saveToGoogleSheets } from "@/lib/google-sheets";
 import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayResponse } from "@/lib/razorpay";
 import { useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
+import { Lock, Minus, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout - GoChrome" }] }),
@@ -17,7 +17,7 @@ type RazorpayOrder = {
 };
 
 function Checkout() {
-  const { items, total, clear } = useCart();
+  const { items, total, setQty, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -186,7 +186,25 @@ function Checkout() {
                   <img src={i.image} alt={i.name} className="h-14 w-14 rounded-lg object-cover bg-muted" />
                   <div className="flex-1 text-sm">
                     <p className="font-medium">{i.name}</p>
-                    <p className="text-muted-foreground">Qty {i.qty}</p>
+                    <div className="mt-2 inline-flex items-center border border-border rounded-full">
+                      <button
+                        type="button"
+                        onClick={() => setQty(i.id, i.qty - 1)}
+                        className="h-7 w-7 grid place-items-center"
+                        aria-label={`Decrease ${i.name} quantity`}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="w-7 text-center text-xs">{i.qty}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQty(i.id, i.qty + 1)}
+                        className="h-7 w-7 grid place-items-center"
+                        aria-label={`Increase ${i.name} quantity`}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
                   <p className="text-sm">₹{(i.price * i.qty).toLocaleString("en-IN")}</p>
                 </div>

@@ -64,6 +64,8 @@ const productDetails = [
   },
 ];
 
+const singleProductMrp = 1499;
+
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
   const [selectedImage, setSelectedImage] = useState(0);
@@ -184,7 +186,7 @@ function Shop() {
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{featured.price.toLocaleString("en-IN")}</span>
-              <span className="text-lg text-muted-foreground line-through">₹{Math.round(featured.price * 1.8).toLocaleString("en-IN")}</span>
+              <span className="text-lg text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</span>
               <span className="text-sm font-semibold text-chrome">SAVE 44%</span>
             </div>
             <div className="mt-6 flex flex-col gap-3">
@@ -214,7 +216,7 @@ function Shop() {
                 </div>
                 <div className="text-right">
                   <p className="font-bold">₹{featured.price.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{Math.round(featured.price * 1.8).toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
