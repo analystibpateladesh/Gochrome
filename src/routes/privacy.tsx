@@ -72,7 +72,7 @@ export const Route = createFileRoute("/privacy")({
 
         <h2 className="text-2xl font-semibold text-foreground">Contact Us</h2>
         <p>If you have any questions about this Privacy Policy or how your information is handled, please contact us:</p>
-        <p>Email: gochromeaudio@gmail.com</p>
+        <p>Email: support@gochome.in</p>
         <p>Response Time: Within 24 hours on business days</p>
       </Prose>
     </>

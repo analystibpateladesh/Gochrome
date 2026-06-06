@@ -7,7 +7,7 @@ export const Route = createFileRoute("/press")({
     <>
       <PageHeader eyebrow="Press" title="In the news." sub="For media inquiries, brand assets, and product samples." />
       <Prose>
-        <p>Press contact: <span className="text-foreground">gochromeaudio@gmail.com</span></p>
+        <p>Press contact: <span className="text-foreground">support@gochome.in</span></p>
         <p>Download our brand kit, hi-res product photography, and executive bios.</p>
       </Prose>
     </>
