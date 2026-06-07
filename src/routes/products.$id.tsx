@@ -54,10 +54,11 @@ function ProductPage() {
           <button onClick={() => buy(false)} className="px-7 py-3.5 rounded-full border border-border text-sm font-medium hover:bg-accent">Add to Bag</button>
         </div>
         <div className="mt-10 grid grid-cols-2 gap-4 text-sm">
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Driver</p><p className="mt-1">Hybrid 1DD + 2BA</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Frequency</p><p className="mt-1">5Hz – 40kHz</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Impedance</p><p className="mt-1">16Ω</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Cable</p><p className="mt-1">6N OFC, 1.2m</p></div>
+          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Speaker</p><p className="mt-1">Copper ring speaker</p></div>
+          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Driver Size</p><p className="mt-1">14.2mm diameter copper ring speaker</p></div>
+          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Frequency Response</p><p className="mt-1">20–20kHz</p></div>
+          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Sensitivity</p><p className="mt-1">103±3dB</p></div>
+          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Impedance</p><p className="mt-1">32±15% Ω</p></div>
         </div>
       </div>
     </section>

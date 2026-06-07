@@ -42,9 +42,26 @@ const productDetails = [
     ),
   },
   {
+    q: "Specifications",
+    a: (
+      <div className="space-y-3">
+        <p className="font-medium">Key specifications:</p>
+        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+          <li>Type C Driver</li>
+          <li>Copper ring speaker</li>
+          <li>Driver unit size: 14.2mm diameter copper ring speaker</li>
+          <li>Frequency response: 20–20kHz</li>
+          <li>Sensitivity: 103±3dB</li>
+          <li>Impedance: 32±15% Ω</li>
+        </ul>
+      </div>
+    ),
+  },
+  {
     q: "How's the sound quality?",
     a: "Chrome Earphones deliver clear vocals, deep bass, and balanced sound, making your music, calls, movies, and everyday listening more enjoyable than ever before.",
   },
+  
   {
     q: "Is there a built-in mic?",
     a: "Yes. Chrome Earphones include a built-in microphone for clear calls, voice notes, online classes, and everyday conversations while staying connected.",
@@ -74,7 +91,7 @@ const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
   const [selectedImage, setSelectedImage] = useState(0);
-  const [openDetail, setOpenDetail] = useState("Description");
+  const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const { add } = useCart();
   const nav = useNavigate();
@@ -197,7 +214,7 @@ function Shop() {
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
-                <p className="text-sm">Crystal Clear Sound</p>
+                <p className="text-sm">Copper Ring Speakers</p>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />

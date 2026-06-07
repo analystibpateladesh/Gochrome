@@ -62,12 +62,12 @@ function Home() {
 
           <div className="mt-14 grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s" }}>
             <div>
-              <div className="text-4xl md:text-5xl font-semibold tracking-tight text-chrome">112<span className="text-2xl align-top">dB</span></div>
-              <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">Audio clarity</p>
+              <div className="text-4xl md:text-5xl font-semibold tracking-tight text-chrome">103<span className="text-2xl align-top">±3</span>dB</div>
+              <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">Sensitivity</p>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-semibold tracking-tight text-chrome">5Hz<span className="text-2xl">–</span>40k</div>
-              <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">Wide bandwidth</p>
+              <div className="text-4xl md:text-5xl font-semibold tracking-tight text-chrome">20<span className="text-2xl">–</span>20kHz</div>
+              <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">Frequency response</p>
             </div>
             <div className="col-span-2 md:col-span-1">
               <div className="text-4xl md:text-5xl font-semibold tracking-tight text-chrome">400</div>
@@ -85,9 +85,9 @@ function Home() {
       <section className="relative z-10 border-y border-border bg-card">
         <div className="mx-auto max-w-7xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { icon: Headphones, l: "Hybrid Driver", v: "Dual BA + DD" },
-            { icon: Zap, l: "Hi-Res Audio", v: "Musician level" },
-            { icon: Shield, l: "Built to Last", v: "Aerospace-grade" },
+            { icon: Headphones, l: "Copper Ring", v: "14.2mm speaker" },
+            { icon: Zap, l: "Sensitivity", v: "103±3dB" },
+            { icon: Shield, l: "Impedance", v: "32±15% Ω" },
             { icon: Sparkles, l: "Chrome Finish", v: "Mirror polished" },
           ].map(({ icon: Icon, l, v }) => (
             <div key={l} className="flex flex-col items-center text-center">
