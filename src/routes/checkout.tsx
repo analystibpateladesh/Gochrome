@@ -303,9 +303,9 @@ function Checkout() {
             <button disabled={loading || !items.length} className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
               {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")}`}
             </button>
-            <button type="button" onClick={demoCheckout} disabled={loading || !items.length} className="w-full px-7 py-3 rounded-full border border-border bg-background text-sm hover:opacity-90">
+            {/*<button type="button" onClick={demoCheckout} disabled={loading || !items.length} className="w-full px-7 py-3 rounded-full border border-border bg-background text-sm hover:opacity-90">
               Demo: Generate Receipt (no payment)
-            </button>
+            </button>*/}
           </div>
         </form>
       </div>
