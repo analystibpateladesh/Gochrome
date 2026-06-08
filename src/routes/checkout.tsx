@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
 import { saveToGoogleSheets } from "@/lib/google-sheets";
 import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayResponse } from "@/lib/razorpay";
-import { useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
+import { useState, useRef, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { toast } from "sonner";
 import { Lock, Minus, Plus } from "lucide-react";
 
@@ -56,10 +56,22 @@ function Checkout() {
       });
 
       if (!orderResponse.ok) {
-        throw new Error("Unable to create Razorpay order.");
+        const errorData = await orderResponse.json().catch(() => ({}));
+        console.error("Razorpay order creation failed:", {
+          status: orderResponse.status,
+          statusText: orderResponse.statusText,
+          error: errorData,
+        });
+        throw new Error(errorData.error || "Unable to create Razorpay order. Check Vercel for RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
       }
 
       const razorpayOrder = (await orderResponse.json()) as RazorpayOrder;
+
+      // Ensure Razorpay is available
+      if (!window.Razorpay) {
+        setLoading(false);
+        throw new Error("Razorpay is not available. Please check your internet connection and try again.");
+      }
 
       const paymentHandler = async (response: RazorpayResponse) => {
         const verifyResponse = await fetch("/api/verify-razorpay-payment", {
@@ -98,9 +110,40 @@ function Checkout() {
             total,
           });
 
-          clear();
-          toast.success("Payment successful. Your order has been placed.");
-          nav({ to: "/" });
+          // Save order locally for the receipt page and navigate there so user can download/print it
+          try {
+            const orderPayload = {
+              orderId,
+              paymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id || razorpayOrder.id,
+              paymentStatus: "paid",
+              customerName,
+              email: String(data.get("email") || ""),
+              phone: String(data.get("phone") || ""),
+              streetAddress: String(data.get("streetAddress") || ""),
+              city: String(data.get("city") || ""),
+              state: String(data.get("state") || ""),
+              pinCode: String(data.get("pinCode") || ""),
+              items: items.map((item) => ({ id: item.id, name: item.name, qty: item.qty, price: item.price, lineTotal: item.price * item.qty })),
+              total,
+              date: new Date().toISOString(),
+            };
+
+            try {
+              sessionStorage.setItem("latestOrder", JSON.stringify(orderPayload));
+            } catch (err) {
+              console.warn("Unable to persist order to sessionStorage", err);
+            }
+
+            clear();
+            toast.success("Payment successful. You can download your receipt now.");
+            nav({ to: "/receipt" });
+          } catch (err) {
+            // fallback: clear cart and go home
+            clear();
+            toast.success("Payment successful. Your order has been placed.");
+            nav({ to: "/" });
+          }
         } catch (error) {
           console.error(error);
           toast.error("Payment worked, but order was not saved. Check VITE_ORDERS_SHEETS_WEB_APP_URL in Vercel.");
@@ -135,9 +178,95 @@ function Checkout() {
       });
 
       checkout.open();
-    } catch {
+    } catch (err) {
       setLoading(false);
-      toast.error("Razorpay checkout could not be opened. Please try again.");
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error("Checkout error:", err);
+      console.error("Error details:", {
+        message: errorMessage,
+        razorpayAvailable: !!window.Razorpay,
+        keyIdSet: !!RAZORPAY_KEY_ID,
+        type: typeof err,
+      });
+      toast.error(`Checkout error: ${errorMessage}`);
+    }
+  };
+
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  const demoCheckout = async () => {
+    if (!items.length) {
+      toast.error("Your bag is empty.");
+      return;
+    }
+
+    setLoading(true);
+    const form = formRef.current;
+    if (!form) {
+      toast.error("Please fill the form first.");
+      setLoading(false);
+      return;
+    }
+
+    const data = new FormData(form);
+    const customerName = `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim();
+    const orderId = `GC-DEMO-${Date.now()}`;
+
+    try {
+      await saveToGoogleSheets({
+        type: "order",
+        orderId,
+        paymentId: `DEMO-${Date.now()}`,
+        razorpayOrderId: "DEMO",
+        paymentStatus: "paid (demo)",
+        customerName,
+        email: data.get("email"),
+        phone: data.get("phone"),
+        streetAddress: data.get("streetAddress"),
+        city: data.get("city"),
+        state: data.get("state"),
+        pinCode: data.get("pinCode"),
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          lineTotal: item.price * item.qty,
+        })),
+        total,
+      });
+
+      const orderPayload = {
+        orderId,
+        paymentId: `DEMO-${Date.now()}`,
+        razorpayOrderId: "DEMO",
+        paymentStatus: "paid (demo)",
+        customerName,
+        email: String(data.get("email") || ""),
+        phone: String(data.get("phone") || ""),
+        streetAddress: String(data.get("streetAddress") || ""),
+        city: String(data.get("city") || ""),
+        state: String(data.get("state") || ""),
+        pinCode: String(data.get("pinCode") || ""),
+        items: items.map((item) => ({ id: item.id, name: item.name, qty: item.qty, price: item.price, lineTotal: item.price * item.qty })),
+        total,
+        date: new Date().toISOString(),
+      };
+
+      try {
+        sessionStorage.setItem("latestOrder", JSON.stringify(orderPayload));
+      } catch (err) {
+        console.warn("Unable to persist order to sessionStorage", err);
+      }
+
+      clear();
+      toast.success("Demo order created. You can download your receipt now.");
+      nav({ to: "/receipt" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Demo checkout failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -145,7 +274,7 @@ function Checkout() {
     <section className="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-[1fr_400px] gap-12">
       <div>
         <h1 className="text-4xl font-semibold tracking-tight mb-8">Checkout</h1>
-        <form onSubmit={submit} className="space-y-8">
+        <form ref={formRef} onSubmit={submit} className="space-y-8">
           <Section title="Contact">
             <Field name="email" label="Email" type="email" required />
             <Field name="phone" label="Phone" type="tel" required />
@@ -170,9 +299,14 @@ function Checkout() {
               </p>
             </div>
           </Section>
-          <button disabled={loading || !items.length} className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
-            {loading ? "Opening Razorpay..." : `Pay ₹${total.toLocaleString("en-IN")}`}
-          </button>
+          <div className="space-y-3">
+            <button disabled={loading || !items.length} className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
+              {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")}`}
+            </button>
+            <button type="button" onClick={demoCheckout} disabled={loading || !items.length} className="w-full px-7 py-3 rounded-full border border-border bg-background text-sm hover:opacity-90">
+              Demo: Generate Receipt (no payment)
+            </button>
+          </div>
         </form>
       </div>
 

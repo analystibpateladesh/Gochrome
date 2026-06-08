@@ -51,8 +51,31 @@ export function loadRazorpayCheckout() {
     const script = document.createElement("script");
     script.src = RAZORPAY_CHECKOUT_SRC;
     script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay Checkout."));
+    
+    let timeoutId: NodeJS.Timeout;
+    
+    script.onload = () => {
+      clearTimeout(timeoutId);
+      if (window.Razorpay) {
+        console.log("Razorpay script loaded successfully");
+        resolve();
+      } else {
+        reject(new Error("Razorpay script loaded but window.Razorpay is not available."));
+      }
+    };
+    
+    script.onerror = () => {
+      clearTimeout(timeoutId);
+      console.error("Failed to load Razorpay script");
+      reject(new Error("Unable to load Razorpay Checkout script."));
+    };
+    
+    // Add a timeout of 10 seconds
+    timeoutId = setTimeout(() => {
+      console.error("Razorpay script loading timed out");
+      reject(new Error("Razorpay Checkout script loading timed out."));
+    }, 10000);
+    
     document.body.appendChild(script);
   });
 

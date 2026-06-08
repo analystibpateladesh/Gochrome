@@ -16,6 +16,7 @@ import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShippingRouteImport } from './routes/shipping'
+import { Route as ReceiptRouteImport } from './routes/receipt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PressRouteImport } from './routes/press'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -62,6 +63,11 @@ const ShopRoute = ShopRouteImport.update({
 const ShippingRoute = ShippingRouteImport.update({
   id: '/shipping',
   path: '/shipping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceiptRoute = ReceiptRouteImport.update({
+  id: '/receipt',
+  path: '/receipt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
+  '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
+  '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
+  '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/press'
     | '/privacy'
+    | '/receipt'
     | '/shipping'
     | '/shop'
     | '/support'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/press'
     | '/privacy'
+    | '/receipt'
     | '/shipping'
     | '/shop'
     | '/support'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/press'
     | '/privacy'
+    | '/receipt'
     | '/shipping'
     | '/shop'
     | '/support'
@@ -267,6 +279,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   PressRoute: typeof PressRoute
   PrivacyRoute: typeof PrivacyRoute
+  ReceiptRoute: typeof ReceiptRoute
   ShippingRoute: typeof ShippingRoute
   ShopRoute: typeof ShopRoute
   SupportRoute: typeof SupportRoute
@@ -326,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/shipping'
       fullPath: '/shipping'
       preLoaderRoute: typeof ShippingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/receipt': {
+      id: '/receipt'
+      path: '/receipt'
+      fullPath: '/receipt'
+      preLoaderRoute: typeof ReceiptRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -427,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   PressRoute: PressRoute,
   PrivacyRoute: PrivacyRoute,
+  ReceiptRoute: ReceiptRoute,
   ShippingRoute: ShippingRoute,
   ShopRoute: ShopRoute,
   SupportRoute: SupportRoute,
