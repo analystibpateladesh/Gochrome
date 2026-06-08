@@ -31,6 +31,7 @@ const productDetails = [
     a: (
       <div className="space-y-4">
         <p>Meet the earbuds that refuse to blend in.</p>
+        <p>Type-C port available for connectivity.</p>
         <p>
           Meet the earphones that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
         </p>
@@ -38,22 +39,6 @@ const productDetails = [
           These earphones are engineered to deliver clear vocals, balanced sound, and deep bass, making every song, video, and call sound crisp and immersive. The ergonomic shape sits comfortably in your ears for extended listening, while the lightweight design ensures they feel as good as they look.The durable cable and USB-C connector provide reliable compatibility with most modern smartphones, tablets, and laptops, so you can plug in and enjoy high-quality audio wherever you go.
         </p>
         <p>Whether they're around your neck, in your hand, or plugged in on the go, these earbuds were made to be noticed.</p>
-      </div>
-    ),
-  },
-  {
-    q: "Specifications",
-    a: (
-      <div className="space-y-3">
-        <p className="font-medium">Key specifications:</p>
-        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-          <li>Type C Driver</li>
-          <li>Copper ring speaker</li>
-          <li>Driver unit size: 14.2mm diameter copper ring speaker</li>
-          <li>Frequency response: 20–20kHz</li>
-          <li>Sensitivity: 103±3dB</li>
-          <li>Impedance: 32±15% Ω</li>
-        </ul>
       </div>
     ),
   },
