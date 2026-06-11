@@ -19,6 +19,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({ meta: [{ title: "Shop — GoChrome" }, { name: "description", content: "Browse the GoChrome lineup of premium audio products." }] }),
@@ -78,6 +85,8 @@ function Shop() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
+  const [selectedPort, setSelectedPort] = useState("type-c");
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -192,9 +201,9 @@ function Shop() {
             </div>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
-              <span className="text-3xl font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</span>
-              <span className="text-lg text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</span>
-              <span className="text-sm font-semibold text-chrome">SAVE {buyOneSavings}%</span>
+              <span className={`text-3xl font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyOnePrice.toLocaleString("en-IN")}</span>
+              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{singleProductMrp.toLocaleString("en-IN")}</span>
+              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>SAVE {buyOneSavings}%</span>
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-start gap-3">
@@ -222,8 +231,8 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
@@ -233,10 +242,34 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
+            </div>
+            <div className="mt-8">
+              <label className="block text-sm font-medium mb-3">Select Port Type</label>
+              <Select value={selectedPort} onValueChange={setSelectedPort}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a port" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="type-c">Type-C</SelectItem>
+                  <SelectItem value="lightning">Lightning</SelectItem>
+                  <SelectItem value="jack">Jack</SelectItem>
+                </SelectContent>
+              </Select>
+              {outOfStockPorts.includes(selectedPort) && (
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start justify-between">
+                  <p className="text-sm font-medium text-red-900">⚫ OUT OF STOCK</p>
+                  <button
+                    onClick={() => setOutOfStockPorts(outOfStockPorts.filter(p => p !== selectedPort))}
+                    className="text-xs text-red-700 hover:text-red-900 font-semibold underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">

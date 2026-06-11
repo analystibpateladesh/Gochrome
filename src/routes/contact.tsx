@@ -38,7 +38,7 @@ function Contact() {
 
   return (
     <>
-      <PageHeader eyebrow="Contact" title="Talk to us." sub="support@gochome.in · +91 9140579643" />
+      <PageHeader eyebrow="Contact" title="Talk to us." sub="support@gochome.in · gochromeaudio@gmail.com · +91 9140579643" />
       <section className="mx-auto max-w-2xl px-6 pb-24">
         <form onSubmit={submit} className="space-y-4">
           <input name="name" required type="text" placeholder="Name" className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
