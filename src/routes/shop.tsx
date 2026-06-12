@@ -279,12 +279,12 @@ function Shop() {
               )}
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-                {isSoldOutOption ? "Pre-order" : "Buy Now"}
-              </button>
-              <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-                {isSoldOutOption ? "Add to Pre-order" : "To Bag"}
-              </button>
+              <button disabled className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold opacity-40 cursor-not-allowed">
+  Buy Now
+</button>
+<button disabled className="flex-1 px-8 py-4 rounded-full border border-border font-semibold opacity-40 cursor-not-allowed">
+  To Bag
+</button>
             </div>
             <div className="mt-6 border-y border-border">
               {productDetails.map((item) => (
