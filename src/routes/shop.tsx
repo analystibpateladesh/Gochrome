@@ -86,7 +86,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "jack"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
   
