@@ -254,9 +254,9 @@ function Shop() {
                   <SelectValue placeholder="Select a port" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="type-c">Type-C</SelectItem>
+                  <SelectItem value="type-c">USB type-C</SelectItem>
                   <SelectItem value="lightning">Lightning</SelectItem>
-                  <SelectItem value="jack">Jack</SelectItem>
+                  <SelectItem value="jack">3.5mm</SelectItem>
                 </SelectContent>
               </Select>
               {outOfStockPorts.includes(selectedPort) && (
