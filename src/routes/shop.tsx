@@ -119,21 +119,28 @@ function Shop() {
   const selectedQty = selectedBundle === "buy2" ? 2 : 1;
   const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
   const selectedUnitPrice = selectedTotal / selectedQty;
+  const isSoldOutOption = outOfStockPorts.includes(selectedPort);
+  
   const selectedItem = {
     id: `${featured.id}-${selectedBundle}`,
     name: selectedBundle === "buy2" ? `${featured.name} - Buy 2` : featured.name,
     price: selectedUnitPrice,
     image: featured.image,
+    isSoldOut: isSoldOutOption,
   };
   
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
-    toast.success("Added to bag");
+    toast.success(isSoldOutOption ? "Added to pre-order" : "Added to bag");
   };
   
   const handleBuyNow = () => {
     add(selectedItem, selectedQty);
-    toast.success("Added to bag. Proceeding to checkout...");
+    if (isSoldOutOption) {
+      toast.success("Added to pre-order. Proceeding to checkout...");
+    } else {
+      toast.success("Added to bag. Proceeding to checkout...");
+    }
     nav({ to: "/checkout" });
   };
 
@@ -273,10 +280,10 @@ function Shop() {
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-                Buy Now
+                {isSoldOutOption ? "Pre-order" : "Buy Now"}
               </button>
               <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-                To Bag
+                {isSoldOutOption ? "Add to Pre-order" : "To Bag"}
               </button>
             </div>
             <div className="mt-6 border-y border-border">

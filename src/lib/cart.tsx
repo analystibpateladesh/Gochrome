@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type CartItem = { id: string; name: string; price: number; image: string; qty: number };
+export type CartItem = { id: string; name: string; price: number; image: string; qty: number; isSoldOut?: boolean };
 type Ctx = {
   items: CartItem[];
   add: (item: Omit<CartItem, "qty">, qty?: number) => void;

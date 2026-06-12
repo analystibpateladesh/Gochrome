@@ -20,8 +20,65 @@ function Checkout() {
   const { items, total, setQty, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
+  
+  const hasPreOrders = items.some(item => item.isSoldOut);
+  const hasRegularItems = items.some(item => !item.isSoldOut);
+
+  const preOrderSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!items.length) {
+      toast.error("Your bag is empty.");
+      return;
+    }
+
+    setLoading(true);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const customerName = `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim();
+    const orderId = `GC-PREORDER-${Date.now()}`;
+
+    try {
+      await saveToGoogleSheets({
+        type: "order",
+        orderId,
+        orderType: "pre-order",
+        paymentId: "N/A",
+        razorpayOrderId: "N/A",
+        paymentStatus: "not paid",
+        customerName,
+        email: data.get("email"),
+        phone: data.get("phone"),
+        streetAddress: data.get("streetAddress"),
+        city: data.get("city"),
+        state: data.get("state"),
+        pinCode: data.get("pinCode"),
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          lineTotal: item.price * item.qty,
+        })),
+        total,
+      });
+
+      clear();
+      toast.success("Pre-order confirmed! We'll contact you soon.");
+      nav({ to: "/shop" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Pre-order failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
+    if (hasPreOrders && !hasRegularItems) {
+      return preOrderSubmit(e);
+    }
+    
     e.preventDefault();
 
     if (!items.length) {
@@ -273,7 +330,9 @@ function Checkout() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-[1fr_400px] gap-12">
       <div>
-        <h1 className="text-4xl font-semibold tracking-tight mb-8">Checkout</h1>
+        <h1 className="text-4xl font-semibold tracking-tight mb-8">
+          {hasPreOrders && !hasRegularItems ? "Pre-order Confirmation" : "Checkout"}
+        </h1>
         <form ref={formRef} onSubmit={submit} className="space-y-8">
           <Section title="Contact">
             <Field name="email" label="Email" type="email" required />
@@ -291,35 +350,61 @@ function Checkout() {
               <Field name="pinCode" label="PIN code" required />
             </div>
           </Section>
-          <Section title="Payment">
-            <div className="rounded-xl border border-border bg-muted/40 px-4 py-4">
-              <p className="text-sm font-medium">Pay securely with Razorpay</p>
-              <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1.5">
-                <Lock className="h-3 w-3" /> Cards, UPI, netbanking, and wallets are handled by Razorpay.
-              </p>
-            </div>
-          </Section>
+          
+          {!hasPreOrders || hasRegularItems ? (
+            <Section title="Payment">
+              <div className="rounded-xl border border-border bg-muted/40 px-4 py-4">
+                <p className="text-sm font-medium">Pay securely with Razorpay</p>
+                <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1.5">
+                  <Lock className="h-3 w-3" /> Cards, UPI, netbanking, and wallets are handled by Razorpay.
+                </p>
+              </div>
+            </Section>
+          ) : (
+            <Section title="Pre-order Status">
+              <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-4">
+                <p className="text-sm font-medium text-amber-900">Pre-order Request</p>
+                <p className="mt-1 text-xs text-amber-700">
+                  No payment required. We'll contact you when items are back in stock.
+                </p>
+              </div>
+            </Section>
+          )}
+          
           <div className="space-y-3">
-            <button disabled={loading || !items.length} className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
-              {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")}`}
+            <button 
+              disabled={loading || !items.length} 
+              className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
+            >
+              {loading 
+                ? (hasPreOrders && !hasRegularItems ? "Processing pre-order..." : "Processing...")
+                : (hasPreOrders && !hasRegularItems 
+                    ? `Confirm Pre-order`
+                    : `Pay ₹${total.toLocaleString("en-IN")}`
+                )
+              }
             </button>
-            {/*<button type="button" onClick={demoCheckout} disabled={loading || !items.length} className="w-full px-7 py-3 rounded-full border border-border bg-background text-sm hover:opacity-90">
-              Demo: Generate Receipt (no payment)
-            </button>*/}
           </div>
         </form>
       </div>
 
       <aside className="card-soft p-6 h-fit lg:sticky lg:top-24">
-        <h2 className="font-semibold mb-4">Order summary</h2>
-        {items.length === 0 ? <p className="text-sm text-muted-foreground">Your bag is empty.</p> : (
+        <h2 className="font-semibold mb-4">
+          {hasPreOrders && !hasRegularItems ? "Pre-order Summary" : "Order summary"}
+        </h2>
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Your bag is empty.</p>
+        ) : (
           <>
             <div className="space-y-3">
               {items.map(i => (
                 <div key={i.id} className="flex gap-3">
                   <img src={i.image} alt={i.name} className="h-14 w-14 rounded-lg object-cover bg-muted" />
                   <div className="flex-1 text-sm">
-                    <p className="font-medium">{i.name}</p>
+                    <div className="flex items-start justify-between">
+                      <p className="font-medium">{i.name}</p>
+                      {i.isSoldOut && <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">Pre-order</span>}
+                    </div>
                     <div className="mt-2 inline-flex items-center border border-border rounded-full">
                       <button
                         type="button"
@@ -347,7 +432,13 @@ function Checkout() {
             <div className="border-t border-border mt-5 pt-4 space-y-1.5 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>₹{total.toLocaleString("en-IN")}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span>Free</span></div>
-              <div className="flex justify-between text-base font-medium pt-2"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
+              <div className="flex justify-between text-base font-medium pt-2">
+                <span>{hasPreOrders && !hasRegularItems ? "Pre-order Total" : "Total"}</span>
+                <span>₹{total.toLocaleString("en-IN")}</span>
+              </div>
+              {hasPreOrders && !hasRegularItems && (
+                <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">Payment status: Not paid (will be charged when item is back in stock)</p>
+              )}
             </div>
           </>
         )}
