@@ -437,7 +437,7 @@ function Checkout() {
                 <span>₹{total.toLocaleString("en-IN")}</span>
               </div>
               {hasPreOrders && !hasRegularItems && (
-                <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">Payment status: Not paid (will be charged when item is back in stock)</p>
+                <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">Payment status: Not paid (will be charged if you buy the item, when it is back in stock)</p>
               )}
             </div>
           </>
