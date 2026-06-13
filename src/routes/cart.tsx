@@ -49,7 +49,7 @@ function Cart() {
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>₹{total.toLocaleString("en-IN")}</span></div>
         <div className="flex justify-between text-sm mt-2"><span className="text-muted-foreground">Shipping</span><span>Free</span></div>
         <div className="flex justify-between text-lg font-medium mt-4 pt-4 border-t border-border"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
-        <Link to="/checkout" className="mt-6 block text-center px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90">Checkout</Link>
+        {/*<Link to="/checkout" className="mt-6 block text-center px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90">Checkout</Link>*/}
       </div>
     </section>
   );
