@@ -6,7 +6,7 @@ import { useState, useRef, type FormEvent, type InputHTMLAttributes, type ReactN
 import { toast } from "sonner";
 import { Lock, Minus, Plus } from "lucide-react";
 
-export const Route = createFileRoute("/checkout")({
+export const Route = createFileRoute("/waitlist")({
   head: () => ({ meta: [{ title: "Checkout - GoChrome" }] }),
   component: Checkout,
 });
@@ -33,10 +33,6 @@ function Checkout() {
       return;
     }
 
-    if (!items.length) {
-      toast.error("Your bag is empty.");
-      return;
-    }
 
     setLoading(true);
     const data = new FormData(form);
@@ -45,8 +41,9 @@ function Checkout() {
 
     try {
       await saveToGoogleSheets({
-        type: "waitlist",
+        type: "order",
         orderId,
+        orderType: "waitlist",
         paymentId: "N/A",
         razorpayOrderId: "N/A",
         paymentStatus: "waitlist (no payment)",
@@ -174,8 +171,9 @@ function Checkout() {
 
         try {
           await saveToGoogleSheets({
-            type: "preorder",
+            type: "order",
             orderId,
+            orderType: "pre-order (paid)",
             paymentId: response.razorpay_payment_id,
             razorpayOrderId: response.razorpay_order_id || razorpayOrder.id,
             paymentStatus: "paid",
@@ -350,7 +348,7 @@ function Checkout() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-[1fr_400px] gap-12">
       <div>
-        <h1 className="text-4xl font-semibold tracking-tight mb-8">Pre-order</h1>
+        <h1 className="text-4xl font-semibold tracking-tight mb-8">Join Waitlist (No payment)</h1>
         <form ref={formRef} onSubmit={submit} className="space-y-8">
           <Section title="Contact">
             <Field name="email" label="Email" type="email" required />
@@ -370,33 +368,33 @@ function Checkout() {
           </Section>
 
           <Section title="Payment">
-            <div className="rounded-xl border border-border bg-muted/40 px-4 py-4">
+            {/*<div className="rounded-xl border border-border bg-muted/40 px-4 py-4">
               <p className="text-sm font-medium">Pay securely with Razorpay</p>
               <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1.5">
                 <Lock className="h-3 w-3" /> Cards, UPI, netbanking, and wallets are handled by Razorpay.
               </p>
-            </div>
+            </div>*/}
           </Section>
 
           <div className="space-y-3">
             {/* Pre-order WITH payment — joins waitlist after Razorpay payment */}
-            <button
+            {/*<button
               type="submit"
               disabled={loading || !items.length}
               className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Processing..." : `Pre-order (Pay ₹${total.toLocaleString("en-IN")})`}
-            </button>
+            </button>*/}
 
             {/* Join waitlist WITHOUT payment */}
-            {/*<button
+            <button
               type="button"
-              disabled={loading || !items.length}
+              disabled={loading}
               onClick={joinWaitlist}
               className="w-full px-7 py-4 rounded-full border border-border font-medium hover:bg-accent disabled:opacity-50"
             >
               {loading ? "Processing..." : "Join Waitlist (No Payment)"}
-            </button>*/}
+            </button>
           </div>
         </form>
       </div>

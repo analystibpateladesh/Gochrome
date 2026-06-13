@@ -11,6 +11,7 @@ const nav = [
   { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
+  { to: "/waitlist", label: "Join Waitlist" },
 ];
 
 export function Header() {

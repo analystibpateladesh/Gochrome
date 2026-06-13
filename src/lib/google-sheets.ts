@@ -1,20 +1,43 @@
 const CONTACT_SHEETS_WEB_APP_URL = import.meta.env.VITE_CONTACT_SHEETS_WEB_APP_URL;
 const ORDERS_SHEETS_WEB_APP_URL = import.meta.env.VITE_ORDERS_SHEETS_WEB_APP_URL;
+const PREORDER_SHEETS_WEB_APP_URL = import.meta.env.VITE_PREORDER_SHEETS_WEB_APP_URL;
+const WAITLIST_SHEETS_WEB_APP_URL = import.meta.env.VITE_WAITLIST_SHEETS_WEB_APP_URL;
 
 type SheetPayload = Record<string, unknown> & {
-  type: "contact" | "order";
+  type: "contact" | "order" | "preorder" | "waitlist";
 };
 
 export function isSheetsConfigured() {
   return Boolean(CONTACT_SHEETS_WEB_APP_URL && ORDERS_SHEETS_WEB_APP_URL);
 }
 
-export async function saveToGoogleSheets(payload: SheetPayload) {
-  const url = payload.type === "contact" ? CONTACT_SHEETS_WEB_APP_URL : ORDERS_SHEETS_WEB_APP_URL;
+function getSheetUrl(payload: SheetPayload): string {
+  switch (payload.type) {
+    case "contact":
+      if (!CONTACT_SHEETS_WEB_APP_URL)
+        throw new Error("Contact Google Sheets URL is not configured. Add VITE_CONTACT_SHEETS_WEB_APP_URL to Vercel.");
+      return CONTACT_SHEETS_WEB_APP_URL;
 
-  if (!url) {
-    throw new Error(`${payload.type} Google Sheets web app URL is not configured.`);
+    case "preorder":
+      if (!PREORDER_SHEETS_WEB_APP_URL)
+        throw new Error("Pre-order Google Sheets URL is not configured. Add VITE_PREORDER_SHEETS_WEB_APP_URL to Vercel.");
+      return PREORDER_SHEETS_WEB_APP_URL;
+
+    case "waitlist":
+      if (!WAITLIST_SHEETS_WEB_APP_URL)
+        throw new Error("Waitlist Google Sheets URL is not configured. Add VITE_WAITLIST_SHEETS_WEB_APP_URL to Vercel.");
+      return WAITLIST_SHEETS_WEB_APP_URL;
+
+    case "order":
+    default:
+      if (!ORDERS_SHEETS_WEB_APP_URL)
+        throw new Error("Orders Google Sheets URL is not configured. Add VITE_ORDERS_SHEETS_WEB_APP_URL to Vercel.");
+      return ORDERS_SHEETS_WEB_APP_URL;
   }
+}
+
+export async function saveToGoogleSheets(payload: SheetPayload) {
+  const url = getSheetUrl(payload);
 
   await fetch(url, {
     method: "POST",

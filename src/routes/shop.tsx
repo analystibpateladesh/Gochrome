@@ -73,12 +73,12 @@ const productDetails = [
   },
 ];
 
-const buyOnePrice = 699;
-const buyTwoPrice = 1225;
-const singleProductMrp = 1499;
-const buyTwoMrp = singleProductMrp * 2;
-const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
-const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
+// After
+const portPricing: Record<string, { buyOne: number; buyTwo: number; mrp: number }> = {
+  "type-c":   { buyOne: 699,  buyTwo: 1225, mrp: 1499 },
+  "lightning": { buyOne: 799,  buyTwo: 1323, mrp: 1599 },
+  "jack":      { buyOne: 799,  buyTwo: 1323, mrp: 1599 },
+};
 
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
@@ -116,10 +116,18 @@ function Shop() {
       api.scrollTo(idx);
     }
   };
-  const selectedQty = selectedBundle === "buy2" ? 2 : 1;
-  const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-  const selectedUnitPrice = selectedTotal / selectedQty;
-  const isSoldOutOption = outOfStockPorts.includes(selectedPort);
+  // After
+const pricing = portPricing[selectedPort] ?? portPricing["type-c"];
+const buyOnePrice = pricing.buyOne;
+const buyTwoPrice = pricing.buyTwo;
+const singleProductMrp = pricing.mrp;
+const buyTwoMrp = singleProductMrp * 2;
+const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
+const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
+const selectedQty = selectedBundle === "buy2" ? 2 : 1;
+const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
+const selectedUnitPrice = selectedTotal / selectedQty;
+const isSoldOutOption = outOfStockPorts.includes(selectedPort);
   
   const selectedItem = {
     id: `${featured.id}-${selectedBundle}`,
@@ -208,9 +216,9 @@ function Shop() {
             </div>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
-              <span className={`text-3xl font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyOnePrice.toLocaleString("en-IN")}</span>
-              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{singleProductMrp.toLocaleString("en-IN")}</span>
-              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>SAVE {buyOneSavings}%</span>
+              <span className="text-3xl font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</span>
+              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</span>
+              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {buyOneSavings}%</span>
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-start gap-3">
@@ -238,8 +246,8 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
@@ -249,8 +257,8 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort) ? "blur-sm opacity-50" : ""}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
             </div>

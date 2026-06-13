@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarrantyRouteImport } from './routes/warranty'
+import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TechnologyRouteImport } from './routes/technology'
 import { Route as SustainabilityRouteImport } from './routes/sustainability'
@@ -33,6 +34,11 @@ import { Route as ProductsIdRouteImport } from './routes/products.$id'
 const WarrantyRoute = WarrantyRouteImport.update({
   id: '/warranty',
   path: '/warranty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WaitlistRoute = WaitlistRouteImport.update({
+  id: '/waitlist',
+  path: '/waitlist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
   '/terms': typeof TermsRoute
+  '/waitlist': typeof WaitlistRoute
   '/warranty': typeof WarrantyRoute
   '/products/$id': typeof ProductsIdRoute
 }
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
   '/terms': typeof TermsRoute
+  '/waitlist': typeof WaitlistRoute
   '/warranty': typeof WarrantyRoute
   '/products/$id': typeof ProductsIdRoute
 }
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
   '/terms': typeof TermsRoute
+  '/waitlist': typeof WaitlistRoute
   '/warranty': typeof WarrantyRoute
   '/products/$id': typeof ProductsIdRoute
 }
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/sustainability'
     | '/technology'
     | '/terms'
+    | '/waitlist'
     | '/warranty'
     | '/products/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/sustainability'
     | '/technology'
     | '/terms'
+    | '/waitlist'
     | '/warranty'
     | '/products/$id'
   id:
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/sustainability'
     | '/technology'
     | '/terms'
+    | '/waitlist'
     | '/warranty'
     | '/products/$id'
   fileRoutesById: FileRoutesById
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   SustainabilityRoute: typeof SustainabilityRoute
   TechnologyRoute: typeof TechnologyRoute
   TermsRoute: typeof TermsRoute
+  WaitlistRoute: typeof WaitlistRoute
   WarrantyRoute: typeof WarrantyRoute
   ProductsIdRoute: typeof ProductsIdRoute
 }
@@ -297,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/warranty'
       fullPath: '/warranty'
       preLoaderRoute: typeof WarrantyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/waitlist': {
+      id: '/waitlist'
+      path: '/waitlist'
+      fullPath: '/waitlist'
+      preLoaderRoute: typeof WaitlistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -454,6 +474,7 @@ const rootRouteChildren: RootRouteChildren = {
   SustainabilityRoute: SustainabilityRoute,
   TechnologyRoute: TechnologyRoute,
   TermsRoute: TermsRoute,
+  WaitlistRoute: WaitlistRoute,
   WarrantyRoute: WarrantyRoute,
   ProductsIdRoute: ProductsIdRoute,
 }
