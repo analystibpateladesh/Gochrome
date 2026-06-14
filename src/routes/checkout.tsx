@@ -456,7 +456,7 @@ function Checkout() {
                 <span>₹{total.toLocaleString("en-IN")}</span>
               </div>
               <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">
-                Items are currently on pre-order. You will be notified when they ship.
+                Items are currently on pre-order. You'll be notified when they're dispatched.
               </p>
             </div>
           </>

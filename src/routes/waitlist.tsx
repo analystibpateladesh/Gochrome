@@ -399,7 +399,7 @@ function Checkout() {
         </form>
       </div>
 
-      <aside className="card-soft p-6 h-fit lg:sticky lg:top-24">
+      {/*<aside className="card-soft p-6 h-fit lg:sticky lg:top-24">
         <h2 className="font-semibold mb-4">Order Summary</h2>
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">Your bag is empty.</p>
@@ -459,7 +459,7 @@ function Checkout() {
             </div>
           </>
         )}
-      </aside>
+      </aside>*/}
     </section>
   );
 }
