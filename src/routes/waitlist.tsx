@@ -50,7 +50,7 @@ function Waitlist() {
         total,
       });
 
-      const orderPayload = {
+      {/*const orderPayload = {
         orderId,
         paymentId: "N/A",
         razorpayOrderId: "N/A",
@@ -79,11 +79,10 @@ function Waitlist() {
         sessionStorage.setItem("latestOrder", JSON.stringify(orderPayload));
       } catch (err) {
         console.warn("Unable to persist order to sessionStorage", err);
-      }
+      }*/}
 
       clear();
-      toast.success("You've joined the waitlist! Download your confirmation below.");
-      nav({ to: "/receipt" });
+      toast.success("You've joined the waitlist! We will notify you once stock is available.");
     } catch (error) {
       console.error(error);
       toast.error("Failed to join waitlist. Please try again.");
