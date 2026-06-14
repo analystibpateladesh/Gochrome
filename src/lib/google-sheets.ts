@@ -19,14 +19,20 @@ function getSheetUrl(payload: SheetPayload): string {
       return CONTACT_SHEETS_WEB_APP_URL;
 
     case "preorder":
-      if (!PREORDER_SHEETS_WEB_APP_URL)
-        throw new Error("Pre-order Google Sheets URL is not configured. Add VITE_PREORDER_SHEETS_WEB_APP_URL to Vercel.");
-      return PREORDER_SHEETS_WEB_APP_URL;
+  if (!PREORDER_SHEETS_WEB_APP_URL) {
+    console.warn("Preorder URL not set, falling back to orders sheet.");
+    if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
+    return ORDERS_SHEETS_WEB_APP_URL;
+  }
+  return PREORDER_SHEETS_WEB_APP_URL;
 
-    case "waitlist":
-      if (!WAITLIST_SHEETS_WEB_APP_URL)
-        throw new Error("Waitlist Google Sheets URL is not configured. Add VITE_WAITLIST_SHEETS_WEB_APP_URL to Vercel.");
-      return WAITLIST_SHEETS_WEB_APP_URL;
+case "waitlist":
+  if (!WAITLIST_SHEETS_WEB_APP_URL) {
+    console.warn("Waitlist URL not set, falling back to orders sheet.");
+    if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
+    return ORDERS_SHEETS_WEB_APP_URL;
+  }
+  return WAITLIST_SHEETS_WEB_APP_URL;
 
     case "order":
     default:

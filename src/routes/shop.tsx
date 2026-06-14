@@ -271,7 +271,6 @@ const isSoldOutOption = outOfStockPorts.includes(selectedPort);
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
                   <SelectItem value="lightning">Lightning</SelectItem>
-                  <SelectItem value="jack">3.5mm</SelectItem>
                 </SelectContent>
               </Select>
               {outOfStockPorts.includes(selectedPort) && (

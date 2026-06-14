@@ -41,7 +41,7 @@ function Checkout() {
 
     try {
       await saveToGoogleSheets({
-        type: "order",
+        type: "waitlist",
         orderId,
         orderType: "waitlist",
         paymentId: "N/A",
@@ -354,17 +354,17 @@ function Checkout() {
             <Field name="email" label="Email" type="email" required />
             <Field name="phone" label="Phone" type="tel" required />
           </Section>
-          <Section title="Shipping address">
+          <Section title="Personal Details">
             <div className="grid sm:grid-cols-2 gap-4">
               <Field name="firstName" label="First name" required />
               <Field name="lastName" label="Last name" required />
             </div>
-            <Field name="streetAddress" label="Street address" required />
+            {/*<Field name="streetAddress" label="Street address" required />
             <div className="grid sm:grid-cols-3 gap-4">
               <Field name="city" label="City" required />
               <Field name="state" label="State" required />
               <Field name="pinCode" label="PIN code" required />
-            </div>
+            </div>*/}
           </Section>
 
           <Section title="Payment">
