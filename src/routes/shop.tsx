@@ -243,8 +243,8 @@ const selectedItem = {
               </div>
             </div>
             <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm font-medium text-yellow-900">⚫ LOW STOCK, READY TO BE SHIPPED</p>
-              <p className="text-xs text-yellow-700 mt-1">Limited Edition - Almost Sold Out</p>
+              <p className="text-sm font-medium text-yellow-900">Chrome Earphones</p>
+              <p className="text-xs text-yellow-700 mt-1">Limited Edition</p>
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
