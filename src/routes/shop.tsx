@@ -129,13 +129,21 @@ const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const selectedUnitPrice = selectedTotal / selectedQty;
 const isSoldOutOption = outOfStockPorts.includes(selectedPort);
   
-  const selectedItem = {
-    id: `${featured.id}-${selectedBundle}`,
-    name: selectedBundle === "buy2" ? `${featured.name} - Buy 2` : featured.name,
-    price: selectedUnitPrice,
-    image: featured.image,
-    isSoldOut: isSoldOutOption,
-  };
+const portLabel: Record<string, string> = {
+  "type-c": "Type-C",
+  "lightning": "Lightning",
+};
+
+const selectedItem = {
+  id: `${featured.id}-${selectedBundle}-${selectedPort}`,
+  name: selectedBundle === "buy2"
+    ? `${featured.name} (${portLabel[selectedPort]}) - Buy 2`
+    : `${featured.name} (${portLabel[selectedPort]})`,
+  price: selectedUnitPrice,
+  image: featured.image,
+  isSoldOut: isSoldOutOption,
+  portType: portLabel[selectedPort],
+};
   
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
