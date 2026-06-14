@@ -60,6 +60,7 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
+          portType: (item as any).portType ?? "",
           qty: item.qty,
           price: item.price,
           lineTotal: item.price * item.qty,
@@ -82,6 +83,7 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
+          portType: (item as any).portType ?? "",
           qty: item.qty,
           price: item.price,
           lineTotal: item.price * item.qty,
@@ -189,6 +191,7 @@ function Checkout() {
             items: items.map((item) => ({
               id: item.id,
               name: item.name,
+              portType: (item as any).portType ?? "",
               qty: item.qty,
               price: item.price,
               lineTotal: item.price * item.qty,
@@ -211,6 +214,7 @@ function Checkout() {
             items: items.map((item) => ({
               id: item.id,
               name: item.name,
+              portType: (item as any).portType ?? "",
               qty: item.qty,
               price: item.price,
               lineTotal: item.price * item.qty,
@@ -306,6 +310,7 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
+          portType: (item as any).portType ?? "",
           qty: item.qty,
           price: item.price,
           lineTotal: item.price * item.qty,
@@ -325,7 +330,7 @@ function Checkout() {
         city: String(data.get("city") || ""),
         state: String(data.get("state") || ""),
         pinCode: String(data.get("pinCode") || ""),
-        items: items.map((item) => ({ id: item.id, name: item.name, qty: item.qty, price: item.price, lineTotal: item.price * item.qty })),
+        items: items.map((item) => ({ id: item.id, name: item.name, portType: (item as any).portType ?? "", qty: item.qty, price: item.price, lineTotal: item.price * item.qty })),
         total,
         date: new Date().toISOString(),
       };
