@@ -50,37 +50,6 @@ function Waitlist() {
         total,
       });
 
-      {/*const orderPayload = {
-        orderId,
-        paymentId: "N/A",
-        razorpayOrderId: "N/A",
-        paymentStatus: "waitlist (no payment)",
-        customerName,
-        email: String(data.get("email") || ""),
-        phone: String(data.get("phone") || ""),
-        streetAddress: "",
-        city: "",
-        state: "",
-        pinCode: "",
-        notifyWhenBack: notify,
-        items: items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          portType: (item as any).portType ?? "",
-          qty: item.qty,
-          price: item.price,
-          lineTotal: item.price * item.qty,
-        })),
-        total,
-        date: new Date().toISOString(),
-      };
-
-      try {
-        sessionStorage.setItem("latestOrder", JSON.stringify(orderPayload));
-      } catch (err) {
-        console.warn("Unable to persist order to sessionStorage", err);
-      }*/}
-
       clear();
       toast.success("You've joined the waitlist! We will notify you once stock is available.");
     } catch (error) {
@@ -120,15 +89,15 @@ function Waitlist() {
             className="mt-0.5 h-4 w-4 accent-primary cursor-pointer"
           />
           <label htmlFor="notify" className="text-sm cursor-pointer select-none">
-            ✅ Notify me when they're back in stock
+            Notify me when they're back in stock
           </label>
         </div>
 
         <button
           type="button"
-          disabled={loading}
+          disabled={loading || !notify}
           onClick={joinWaitlist}
-          className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
+          className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Processing..." : "Join Waitlist (No Payment)"}
         </button>
