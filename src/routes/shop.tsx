@@ -284,13 +284,13 @@ const selectedItem = {
               {outOfStockPorts.includes(selectedPort) && (
                 
                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start justify-between">
-                  {/*<p className="text-sm font-medium text-red-900">SOLD OUT. We are stocking soon, Please visit after some time</p>
+                  <p className="text-sm font-medium text-red-900">Currently out of stock - pre-order to secure yours</p>
                   <button
                     onClick={() => setOutOfStockPorts(outOfStockPorts.filter(p => p !== selectedPort))}
                     className="text-xs text-red-700 hover:text-red-900 font-semibold underline"
                   >
                     Remove
-                  </button>*/}
+                  </button>
                 </div>
               )}
             </div>
