@@ -17,7 +17,7 @@ type RazorpayOrder = {
 };
 
 function Checkout() {
-  const { items, total, setQty, clear } = useCart();
+  const { items, total, setQty, remove, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -423,25 +423,20 @@ function Checkout() {
                         <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">Pre-order</span>
                       )}
                     </div>
-                    <div className="mt-2 inline-flex items-center border border-border rounded-full">
-                      <button
-                        type="button"
-                        onClick={() => setQty(i.id, i.qty - 1)}
-                        className="h-7 w-7 grid place-items-center"
-                        aria-label={`Decrease ${i.name} quantity`}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <span className="w-7 text-center text-xs">{i.qty}</span>
-                      <button
-                        type="button"
-                        onClick={() => setQty(i.id, i.qty + 1)}
-                        className="h-7 w-7 grid place-items-center"
-                        aria-label={`Increase ${i.name} quantity`}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+  <div className="inline-flex items-center border border-border rounded-full">
+    <button type="button" onClick={() => setQty(i.id, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
+      <Minus className="h-3 w-3" />
+    </button>
+    <span className="w-7 text-center text-xs">{i.qty}</span>
+    <button type="button" onClick={() => setQty(i.id, i.qty + 1)} className="h-7 w-7 grid place-items-center" aria-label={`Increase ${i.name} quantity`}>
+      <Plus className="h-3 w-3" />
+    </button>
+  </div>
+  <button type="button" onClick={() => remove(i.id)} className="text-xs text-muted-foreground hover:text-destructive underline">
+    Remove
+  </button>
+</div>
                   </div>
                   <p className="text-sm">₹{(i.price * i.qty).toLocaleString("en-IN")}</p>
                 </div>

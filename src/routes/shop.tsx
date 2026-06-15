@@ -285,12 +285,6 @@ const selectedItem = {
                 
                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start justify-between">
                   <p className="text-sm font-medium text-red-900">Currently out of stock - pre-order to secure yours</p>
-                  <button
-                    onClick={() => setOutOfStockPorts(outOfStockPorts.filter(p => p !== selectedPort))}
-                    className="text-xs text-red-700 hover:text-red-900 font-semibold underline"
-                  >
-                    Remove
-                  </button>
                 </div>
               )}
             </div>
