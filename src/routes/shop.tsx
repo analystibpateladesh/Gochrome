@@ -284,7 +284,7 @@ const selectedItem = {
               {outOfStockPorts.includes(selectedPort) && (
                 
                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start justify-between">
-                  <p className="text-sm font-medium text-red-900">Currently out of stock - pre-order to secure yours</p>
+                  <p className="text-sm font-medium text-red-900">Next Drop Pre-Orders Live - launching Soon</p>
                 </div>
               )}
             </div>
