@@ -293,7 +293,7 @@ const selectedItem = {
   {isSoldOutOption ? "Pre-order" : "Buy Now"}
 </button>
 <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-  {isSoldOutOption ? "Add to Pre-order" : "To Bag"}
+  {isSoldOutOption ? "Add to Cart" : "To Bag"}
 </button>
             </div>
             <div className="mt-6 border-y border-border">
