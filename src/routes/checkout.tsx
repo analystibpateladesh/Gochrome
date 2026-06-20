@@ -16,16 +16,39 @@ type RazorpayOrder = {
   amount: number;
 };
 
+const addPortLabel: Record<string, string> = {
+  "type-c": "Type-C",
+  "lightning": "Lightning",
+};
+const addPortPricing: Record<string, number> = {
+  "type-c": 699,
+  "lightning": 799,
+};
+
 function Checkout() {
-  const { items, total, setQty, remove, clear } = useCart();
+  const { items, total, setQty, remove, add, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [addPort, setAddPort] = useState("type-c");
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const hasPreOrders = items.some(item => item.isSoldOut);
   const hasRegularItems = items.some(item => !item.isSoldOut);
 
-  // ── Join Waitlist (NO payment) ────────────────────────────────────────────
+  // Add another port type directly from checkout
+  const handleAddAnother = () => {
+    add({
+      id: `chrome-pro-buy1-${addPort}`,
+      name: `Chrome Earphones (${addPortLabel[addPort]})`,
+      price: addPortPricing[addPort],
+      image: items[0]?.image ?? "",
+      isSoldOut: true,
+      portType: addPortLabel[addPort],
+    });
+    toast.success(`Added ${addPortLabel[addPort]} earphones to your bag`);
+  };
+
+  // Join Waitlist (NO payment)
   const joinWaitlist = async () => {
     const form = formRef.current;
     if (!form || !form.checkValidity()) {
@@ -109,7 +132,7 @@ function Checkout() {
     }
   };
 
-  // ── Pre-order WITH payment (Razorpay) ────────────────────────────────────
+  // Pre-order WITH payment (Razorpay)
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -384,7 +407,6 @@ function Checkout() {
           </Section>
 
           <div className="space-y-3">
-            {/* Pre-order WITH payment — joins waitlist after Razorpay payment */}
             <button
               type="submit"
               disabled={loading || !items.length}
@@ -392,16 +414,6 @@ function Checkout() {
             >
               {loading ? "Processing..." : `Pre-order (Pay ₹${total.toLocaleString("en-IN")})`}
             </button>
-
-            {/* Join waitlist WITHOUT payment */}
-            {/*<button
-              type="button"
-              disabled={loading || !items.length}
-              onClick={joinWaitlist}
-              className="w-full px-7 py-4 rounded-full border border-border font-medium hover:bg-accent disabled:opacity-50"
-            >
-              {loading ? "Processing..." : "Join Waitlist (No Payment)"}
-            </button>*/}
           </div>
         </form>
       </div>
@@ -424,24 +436,46 @@ function Checkout() {
                       )}
                     </div>
                     <div className="mt-2 flex items-center gap-2">
-  <div className="inline-flex items-center border border-border rounded-full">
-    <button type="button" onClick={() => setQty(i.id, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
-      <Minus className="h-3 w-3" />
-    </button>
-    <span className="w-7 text-center text-xs">{i.qty}</span>
-    <button type="button" onClick={() => setQty(i.id, i.qty + 1)} className="h-7 w-7 grid place-items-center" aria-label={`Increase ${i.name} quantity`}>
-      <Plus className="h-3 w-3" />
-    </button>
-  </div>
-  <button type="button" onClick={() => remove(i.id)} className="text-xs text-muted-foreground hover:text-destructive underline">
-    Remove
-  </button>
-</div>
+                      <div className="inline-flex items-center border border-border rounded-full">
+                        <button type="button" onClick={() => setQty(i.id, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="w-7 text-center text-xs">{i.qty}</span>
+                        <button type="button" onClick={() => setQty(i.id, i.qty + 1)} className="h-7 w-7 grid place-items-center" aria-label={`Increase ${i.name} quantity`}>
+                          <Plus className="h-3 w-3" />
+                        </button>
+                      </div>
+                      <button type="button" onClick={() => remove(i.id)} className="text-xs text-muted-foreground hover:text-destructive underline">
+                        Remove
+                      </button>
+                    </div>
                   </div>
                   <p className="text-sm">₹{(i.price * i.qty).toLocaleString("en-IN")}</p>
                 </div>
               ))}
             </div>
+
+            <div className="mt-4 p-3 rounded-xl border border-dashed border-border">
+              <p className="text-xs font-medium mb-4">Add one more </p>
+              <div className="flex gap-2">
+                <select
+                  value={addPort}
+                  onChange={(e) => setAddPort(e.target.value)}
+                  className="flex-1 text-sm px-3 py-2 rounded-lg border border-border bg-background"
+                >
+                  <option value="type-c">USB Type-C (₹699)</option>
+                  <option value="lightning">Lightning (₹799)</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAddAnother}
+                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
             <div className="border-t border-border mt-5 pt-4 space-y-1.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
