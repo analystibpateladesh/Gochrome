@@ -38,7 +38,6 @@ const productDetails = [
     a: (
       <div className="space-y-4">
         <p>Meet the earbuds that refuse to blend in.</p>
-        <p>Type-C port available for connectivity.</p>
         <p>
           Meet the earphones that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
         </p>
@@ -75,8 +74,8 @@ const productDetails = [
 
 // After
 const portPricing: Record<string, { buyOne: number; buyTwo: number; mrp: number }> = {
-  "type-c":   { buyOne: 699,  buyTwo: 1225, mrp: 1499 },
-  "lightning": { buyOne: 799,  buyTwo: 1323, mrp: 1599 },
+  "type-c":   { buyOne: 799,  buyTwo: 1325, mrp: 1599 },
+  "lightning": { buyOne: 899,  buyTwo: 1423, mrp: 1699 },
   "jack":      { buyOne: 799,  buyTwo: 1323, mrp: 1599 },
 };
 
