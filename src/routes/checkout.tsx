@@ -113,28 +113,24 @@ function Checkout() {
     };
   };
 
-  const handleItemQtyChange = (item: CartItem, nextQty: number) => {
-    if (item.id.includes("buy2") && nextQty <= 1) {
-      replaceItems(items.map(cartItem => (cartItem.id === item.id ? toSingleCartItem(item) : cartItem)));
-      return;
+  const isChromeItem = (item: CartItem) => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones");
+
+  const getItemPorts = (item: CartItem) => {
+    if (item.portType?.includes("+")) {
+      return item.portType.split("+").map(port => normalizePort(port)).filter(Boolean);
     }
 
-    setQty(item.id, nextQty);
+    const port = normalizePort(item.portType || item.name);
+    return Array.from({ length: item.qty }, () => port).filter(Boolean);
   };
 
-  // Add another port type directly from checkout
-  const handleAddAnother = () => {
+  const getPrimaryPort = (item: CartItem) => getItemPorts({ ...item, qty: 1 })[0] || "";
+
+  const addChromePortToCart = (portToAdd: string) => {
     const chromeItems = items.filter(item => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones"));
     const otherItems = items.filter(item => !chromeItems.includes(item));
-    const existingPorts = chromeItems.flatMap(item => {
-      if (item.portType?.includes("+")) {
-        return item.portType.split("+").map(port => normalizePort(port)).filter(Boolean);
-      }
-
-      const port = normalizePort(item.portType || item.name);
-      return Array.from({ length: item.qty }, () => port).filter(Boolean);
-    });
-    const nextPorts = [...existingPorts, addPort];
+    const existingPorts = chromeItems.flatMap(getItemPorts);
+    const nextPorts = [...existingPorts, portToAdd];
     const image = chromeItems[0]?.image || items[0]?.image || "";
     const bundleItem = toCheckoutBundle(nextPorts, image);
 
@@ -145,14 +141,37 @@ function Checkout() {
     }
 
     add({
-      id: `chrome-pro-buy1-${addPort}`,
-      name: `Chrome Earphones (${addPortLabel[addPort]})`,
-      price: addPortPricing[addPort],
+      id: `chrome-pro-buy1-${portToAdd}`,
+      name: `Chrome Earphones (${addPortLabel[portToAdd]})`,
+      price: addPortPricing[portToAdd],
       image: items[0]?.image ?? "",
       isSoldOut: true,
-      portType: addPortLabel[addPort],
+      portType: addPortLabel[portToAdd],
     });
-    toast.success(`Added ${addPortLabel[addPort]} earphones to your bag`);
+    toast.success(`Added ${addPortLabel[portToAdd]} earphones to your bag`);
+  };
+
+  const handleItemQtyChange = (item: CartItem, nextQty: number) => {
+    if (item.id.includes("buy2") && nextQty <= 1) {
+      replaceItems(items.map(cartItem => (cartItem.id === item.id ? toSingleCartItem(item) : cartItem)));
+      return;
+    }
+
+    if (nextQty > item.qty && isChromeItem(item)) {
+      const port = getPrimaryPort(item);
+
+      if (port) {
+        addChromePortToCart(port);
+        return;
+      }
+    }
+
+    setQty(item.id, nextQty);
+  };
+
+  // Add another port type directly from checkout
+  const handleAddAnother = () => {
+    addChromePortToCart(addPort);
   };
 
   const reverseGeocode = async (latitude: number, longitude: number) => {
