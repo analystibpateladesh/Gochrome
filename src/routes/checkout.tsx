@@ -21,14 +21,15 @@ const addPortLabel: Record<string, string> = {
   "lightning": "Lightning",
 };
 const addPortPricing: Record<string, number> = {
-  "type-c": 699,
-  "lightning": 799,
+  "type-c": 799,
+  "lightning": 899,
 };
 
 function Checkout() {
   const { items, total, setQty, remove, add, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [locatingAddress, setLocatingAddress] = useState(false);
   const [addPort, setAddPort] = useState("type-c");
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -46,6 +47,51 @@ function Checkout() {
       portType: addPortLabel[addPort],
     });
     toast.success(`Added ${addPortLabel[addPort]} earphones to your bag`);
+  };
+
+  const handleSelectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location is not supported on this browser.");
+      return;
+    }
+
+    const mapsWindow = window.open("about:blank", "_blank", "noopener,noreferrer");
+    setLocatingAddress(true);
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const latitude = Number(coords.latitude.toFixed(6));
+        const longitude = Number(coords.longitude.toFixed(6));
+        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        const streetAddress = `Google Maps location: ${mapsUrl}`;
+        const streetInput = formRef.current?.elements.namedItem("streetAddress");
+
+        if (streetInput instanceof HTMLInputElement) {
+          streetInput.value = streetAddress;
+          streetInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+
+        if (mapsWindow) {
+          mapsWindow.location.href = mapsUrl;
+        } else {
+          window.open(mapsUrl, "_blank", "noopener,noreferrer");
+        }
+
+        toast.success("Location added to street address.");
+        setLocatingAddress(false);
+      },
+      (error) => {
+        mapsWindow?.close();
+        const message =
+          error.code === error.PERMISSION_DENIED
+            ? "Please allow location access to use map selection."
+            : "Unable to get your location. Please try again.";
+
+        toast.error(message);
+        setLocatingAddress(false);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    );
   };
 
   // Join Waitlist (NO payment)
@@ -389,7 +435,17 @@ function Checkout() {
               <Field name="firstName" label="First name" required />
               <Field name="lastName" label="Last name" required />
             </div>
-            <Field name="streetAddress" label="Street address" required />
+            <div>
+              <Field name="streetAddress" label="Street address" required />
+              <button
+                type="button"
+                onClick={handleSelectLocation}
+                disabled={locatingAddress}
+                className="mt-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {locatingAddress ? "Getting location..." : "Select location on map"}
+              </button>
+            </div>
             <div className="grid sm:grid-cols-3 gap-4">
               <Field name="city" label="City" required />
               <Field name="state" label="State" required />
@@ -463,8 +519,8 @@ function Checkout() {
                   onChange={(e) => setAddPort(e.target.value)}
                   className="flex-1 text-sm px-3 py-2 rounded-lg border border-border bg-background"
                 >
-                  <option value="type-c">USB Type-C (₹699)</option>
-                  <option value="lightning">Lightning (₹799)</option>
+                  <option value="type-c">USB Type-C (₹799)</option>
+                  <option value="lightning">Lightning (₹899)</option>
                 </select>
                 <button
                   type="button"
