@@ -5,6 +5,7 @@ type Ctx = {
   items: CartItem[];
   add: (item: Omit<CartItem, "qty">, qty?: number) => void;
   remove: (id: string) => void;
+  replaceItems: (items: CartItem[]) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
   total: number;
@@ -33,12 +34,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
   const remove = (id: string) => setItems(prev => prev.filter(p => p.id !== id));
+  const replaceItems = (nextItems: CartItem[]) => setItems(nextItems);
   const setQty = (id: string, qty: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, qty: Math.max(1, qty) } : p));
   const clear = () => setItems([]);
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
 
-  return <CartCtx.Provider value={{ items, add, remove, setQty, clear, total, count }}>{children}</CartCtx.Provider>;
+  return <CartCtx.Provider value={{ items, add, remove, replaceItems, setQty, clear, total, count }}>{children}</CartCtx.Provider>;
 }
 
 export const useCart = () => useContext(CartCtx);

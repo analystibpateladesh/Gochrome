@@ -72,11 +72,11 @@ const productDetails = [
   },
 ];
 
-// After
-const portPricing: Record<string, { buyOne: number; buyTwo: number; mrp: number }> = {
-  "type-c":   { buyOne: 799,  buyTwo: 1325, mrp: 1599 },
-  "lightning": { buyOne: 899,  buyTwo: 1423, mrp: 1699 },
-  "jack":      { buyOne: 799,  buyTwo: 1323, mrp: 1599 },
+const portPricing: Record<string, { buyOne: number; buyTwo: number; buyOneMrp: number; buyTwoMrp: number }> = {
+  "type-c": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3196 },
+  "lightning": { buyOne: 899, buyTwo: 1649, buyOneMrp: 1763, buyTwoMrp: 3926 },
+  "type-c-lightning": { buyOne: 799, buyTwo: 1549, buyOneMrp: 1598, buyTwoMrp: 3361 },
+  "jack": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3019 },
 };
 
 function Shop() {
@@ -85,7 +85,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "jack"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -115,22 +115,35 @@ function Shop() {
       api.scrollTo(idx);
     }
   };
-  // After
+
+const handlePortChange = (port: string) => {
+  setSelectedPort(port);
+
+  if (port === "type-c-lightning") {
+    setSelectedBundle("buy2");
+  }
+};
+
 const pricing = portPricing[selectedPort] ?? portPricing["type-c"];
 const buyOnePrice = pricing.buyOne;
 const buyTwoPrice = pricing.buyTwo;
-const singleProductMrp = pricing.mrp;
-const buyTwoMrp = singleProductMrp * 2;
+const singleProductMrp = pricing.buyOneMrp;
+const buyTwoMrp = pricing.buyTwoMrp;
 const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
 const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 const selectedQty = selectedBundle === "buy2" ? 2 : 1;
 const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const selectedUnitPrice = selectedTotal / selectedQty;
 const isSoldOutOption = outOfStockPorts.includes(selectedPort);
+const isMixedPair = selectedPort === "type-c-lightning";
+const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
+const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
+const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
   
 const portLabel: Record<string, string> = {
   "type-c": "Type-C",
   "lightning": "Lightning",
+  "type-c-lightning": "Type-C + Lightning",
 };
 
 const selectedItem = {
@@ -223,9 +236,9 @@ const selectedItem = {
             </div>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
-              <span className="text-3xl font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</span>
-              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</span>
-              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {buyOneSavings}%</span>
+              <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
+              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
+              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-start gap-3">
@@ -247,7 +260,7 @@ const selectedItem = {
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
-                <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
+                <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} disabled={isMixedPair} className="h-4 w-4 disabled:opacity-50" />
                 <div className="ml-4 min-w-0 flex-1">
                   <p className="font-semibold">Buy 1 <span className="text-xs text-muted-foreground font-normal ml-2">MOST POPULAR</span></p>
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
@@ -271,13 +284,14 @@ const selectedItem = {
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Select Port Type</label>
-              <Select value={selectedPort} onValueChange={setSelectedPort}>
+              <Select value={selectedPort} onValueChange={handlePortChange}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a port" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
                   <SelectItem value="lightning">Lightning</SelectItem>
+                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
                 </SelectContent>
               </Select>
               {outOfStockPorts.includes(selectedPort) && (

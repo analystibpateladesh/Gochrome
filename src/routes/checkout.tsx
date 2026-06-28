@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCart } from "@/lib/cart";
+import { useCart, type CartItem } from "@/lib/cart";
 import { saveToGoogleSheets } from "@/lib/google-sheets";
 import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayResponse } from "@/lib/razorpay";
 import { useState, useRef, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { toast } from "sonner";
-import { Lock, Minus, Plus } from "lucide-react";
+import { Lock, MapPin, Minus, Plus, Search, X } from "lucide-react";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout - GoChrome" }] }),
@@ -24,20 +24,126 @@ const addPortPricing: Record<string, number> = {
   "type-c": 799,
   "lightning": 899,
 };
+const checkoutBundlePricing: Record<string, number> = {
+  "type-c+type-c": 1449,
+  "lightning+lightning": 1649,
+  "lightning+type-c": 1549,
+  "type-c+lightning": 1549,
+};
+
+type MapLocation = {
+  address: string;
+  latitude: number;
+  longitude: number;
+};
+
+type NominatimPlace = {
+  display_name: string;
+  lat: string;
+  lon: string;
+};
 
 function Checkout() {
-  const { items, total, setQty, remove, add, clear } = useCart();
+  const { items, total, setQty, remove, replaceItems, add, clear } = useCart();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
   const [locatingAddress, setLocatingAddress] = useState(false);
+  const [locationPickerOpen, setLocationPickerOpen] = useState(false);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [locationResults, setLocationResults] = useState<MapLocation[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
+  const [mapPinPosition, setMapPinPosition] = useState({ x: 50, y: 50 });
+  const [draggingPin, setDraggingPin] = useState(false);
   const [addPort, setAddPort] = useState("type-c");
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const hasPreOrders = items.some(item => item.isSoldOut);
   const hasRegularItems = items.some(item => !item.isSoldOut);
 
+  const setStreetAddress = (address: string) => {
+    const streetInput = formRef.current?.elements.namedItem("streetAddress");
+
+    if (streetInput instanceof HTMLInputElement) {
+      streetInput.value = address;
+      streetInput.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  };
+
+  const normalizePort = (portType = "") => {
+    const port = portType.toLowerCase();
+
+    if (port.includes("lightning")) return "lightning";
+    if (port.includes("type-c") || port.includes("type c")) return "type-c";
+    return "";
+  };
+
+  const toCheckoutBundle = (ports: string[], image: string): CartItem | null => {
+    if (ports.length !== 2) return null;
+
+    const sortedPorts = [...ports].sort();
+    const bundleKey = `${sortedPorts[0]}+${sortedPorts[1]}`;
+    const bundleTotal = checkoutBundlePricing[bundleKey];
+    const labels = sortedPorts.map(port => addPortLabel[port]);
+
+    if (!bundleTotal || labels.some(label => !label)) return null;
+
+    return {
+      id: `chrome-pro-buy2-${bundleKey}`,
+      name: `Chrome Earphones (${labels.join(" + ")}) - Buy 2`,
+      price: bundleTotal / 2,
+      image,
+      qty: 2,
+      isSoldOut: true,
+      portType: labels.join(" + "),
+    };
+  };
+
+  const toSingleCartItem = (item: CartItem): CartItem => {
+    const ports = item.portType?.split("+").map(port => normalizePort(port)).filter(Boolean) ?? [];
+    const port = ports.includes("type-c") ? "type-c" : ports[0] || normalizePort(item.portType || item.name) || "type-c";
+    const label = addPortLabel[port] || "Type-C";
+
+    return {
+      ...item,
+      id: `chrome-pro-buy1-${port}`,
+      name: `Chrome Earphones (${label})`,
+      price: addPortPricing[port] || 799,
+      qty: 1,
+      portType: label,
+    };
+  };
+
+  const handleItemQtyChange = (item: CartItem, nextQty: number) => {
+    if (item.id.includes("buy2") && nextQty <= 1) {
+      replaceItems(items.map(cartItem => (cartItem.id === item.id ? toSingleCartItem(item) : cartItem)));
+      return;
+    }
+
+    setQty(item.id, nextQty);
+  };
+
   // Add another port type directly from checkout
   const handleAddAnother = () => {
+    const chromeItems = items.filter(item => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones"));
+    const otherItems = items.filter(item => !chromeItems.includes(item));
+    const existingPorts = chromeItems.flatMap(item => {
+      if (item.portType?.includes("+")) {
+        return item.portType.split("+").map(port => normalizePort(port)).filter(Boolean);
+      }
+
+      const port = normalizePort(item.portType || item.name);
+      return Array.from({ length: item.qty }, () => port).filter(Boolean);
+    });
+    const nextPorts = [...existingPorts, addPort];
+    const image = chromeItems[0]?.image || items[0]?.image || "";
+    const bundleItem = toCheckoutBundle(nextPorts, image);
+
+    if (bundleItem) {
+      replaceItems([...otherItems, bundleItem]);
+      toast.success(`Updated to Buy 2 pricing for ${bundleItem.portType}`);
+      return;
+    }
+
     add({
       id: `chrome-pro-buy1-${addPort}`,
       name: `Chrome Earphones (${addPortLabel[addPort]})`,
@@ -49,49 +155,128 @@ function Checkout() {
     toast.success(`Added ${addPortLabel[addPort]} earphones to your bag`);
   };
 
-  const handleSelectLocation = () => {
+  const reverseGeocode = async (latitude: number, longitude: number) => {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+      { headers: { Accept: "application/json" } },
+    );
+
+    if (!response.ok) throw new Error("Unable to find address for this location.");
+
+    const data = await response.json();
+    return String(data.display_name || "");
+  };
+
+  const handleSelectLocation = async () => {
+    setLocationPickerOpen(true);
+    setLocationResults([]);
+
     if (!navigator.geolocation) {
       toast.error("Location is not supported on this browser.");
       return;
     }
 
-    const mapsWindow = window.open("about:blank", "_blank", "noopener,noreferrer");
     setLocatingAddress(true);
 
     navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
+      async ({ coords }) => {
         const latitude = Number(coords.latitude.toFixed(6));
         const longitude = Number(coords.longitude.toFixed(6));
-        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-        const streetAddress = `Google Maps location: ${mapsUrl}`;
-        const streetInput = formRef.current?.elements.namedItem("streetAddress");
 
-        if (streetInput instanceof HTMLInputElement) {
-          streetInput.value = streetAddress;
-          streetInput.dispatchEvent(new Event("input", { bubbles: true }));
+        try {
+          const address = await reverseGeocode(latitude, longitude);
+          setSelectedLocation({ address, latitude, longitude });
+          setMapPinPosition({ x: 50, y: 50 });
+        } catch (error) {
+          console.error(error);
+          setSelectedLocation({
+            address: "Current location",
+            latitude,
+            longitude,
+          });
+          toast.error("Map opened, but the address lookup failed. Please search your address.");
+        } finally {
+          setLocatingAddress(false);
         }
-
-        if (mapsWindow) {
-          mapsWindow.location.href = mapsUrl;
-        } else {
-          window.open(mapsUrl, "_blank", "noopener,noreferrer");
-        }
-
-        toast.success("Location added to street address.");
-        setLocatingAddress(false);
       },
       (error) => {
-        mapsWindow?.close();
         const message =
           error.code === error.PERMISSION_DENIED
             ? "Please allow location access to use map selection."
-            : "Unable to get your location. Please try again.";
+            : "Unable to get your location. You can search your address instead.";
 
         toast.error(message);
         setLocatingAddress(false);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
+  };
+
+  const handleLocationSearch = async () => {
+    if (!locationSearch.trim()) return;
+
+    setLocatingAddress(true);
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encodeURIComponent(locationSearch)}`,
+        { headers: { Accept: "application/json" } },
+      );
+
+      if (!response.ok) throw new Error("Unable to search address.");
+
+      const results = ((await response.json()) as NominatimPlace[]).map(place => ({
+        address: place.display_name,
+        latitude: Number(place.lat),
+        longitude: Number(place.lon),
+      }));
+
+      setLocationResults(results);
+      setSelectedLocation(results[0] ?? null);
+      if (results[0]) setMapPinPosition({ x: 50, y: 50 });
+
+      if (!results.length) toast.error("No locations found. Try a more specific address.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Location search failed. Please type the address manually.");
+    } finally {
+      setLocatingAddress(false);
+    }
+  };
+
+  const handleUseSelectedLocation = () => {
+    if (!selectedLocation) {
+      toast.error("Please choose a location first.");
+      return;
+    }
+
+    setStreetAddress(selectedLocation.address);
+    setLocationPickerOpen(false);
+    toast.success("Address added to street address.");
+  };
+
+  const pickMapPoint = async (clientX: number, clientY: number, element: HTMLDivElement) => {
+    if (!selectedLocation) return;
+
+    const rect = element.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
+    const latitude = Number((selectedLocation.latitude + (50 - y) * 0.0002).toFixed(6));
+    const longitude = Number((selectedLocation.longitude + (x - 50) * 0.0002).toFixed(6));
+
+    setMapPinPosition({ x, y });
+    setLocatingAddress(true);
+
+    try {
+      const address = await reverseGeocode(latitude, longitude);
+      setSelectedLocation({ address, latitude, longitude });
+      setMapPinPosition({ x: 50, y: 50 });
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not read that pin address. Try another nearby point.");
+    } finally {
+      setLocatingAddress(false);
+    }
   };
 
   // Join Waitlist (NO payment)
@@ -421,7 +606,12 @@ function Checkout() {
     }
   };
 
+  const selectedMapSrc = selectedLocation
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${selectedLocation.longitude - 0.01}%2C${selectedLocation.latitude - 0.01}%2C${selectedLocation.longitude + 0.01}%2C${selectedLocation.latitude + 0.01}&layer=mapnik&marker=${selectedLocation.latitude}%2C${selectedLocation.longitude}`
+    : "";
+
   return (
+    <>
     <section className="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-[1fr_400px] gap-12">
       <div>
         <h1 className="text-4xl font-semibold tracking-tight mb-8">Pre-order</h1>
@@ -441,7 +631,7 @@ function Checkout() {
                 type="button"
                 onClick={handleSelectLocation}
                 disabled={locatingAddress}
-                className="mt-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {locatingAddress ? "Getting location..." : "Select location on map"}
               </button>
@@ -493,11 +683,11 @@ function Checkout() {
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="inline-flex items-center border border-border rounded-full">
-                        <button type="button" onClick={() => setQty(i.id, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
+                        <button type="button" onClick={() => handleItemQtyChange(i, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
                           <Minus className="h-3 w-3" />
                         </button>
                         <span className="w-7 text-center text-xs">{i.qty}</span>
-                        <button type="button" onClick={() => setQty(i.id, i.qty + 1)} className="h-7 w-7 grid place-items-center" aria-label={`Increase ${i.name} quantity`}>
+                        <button type="button" onClick={() => handleItemQtyChange(i, i.qty + 1)} className="h-7 w-7 grid place-items-center" aria-label={`Increase ${i.name} quantity`}>
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
@@ -553,6 +743,153 @@ function Checkout() {
         )}
       </aside>
     </section>
+    {locationPickerOpen && (
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-4 py-4 sm:items-center">
+        <div className="w-full max-w-2xl rounded-2xl bg-background shadow-2xl">
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <div>
+              <h2 className="text-base font-semibold">Select location on map</h2>
+              <p className="text-xs text-muted-foreground">Use current location or search, then confirm the pinned address.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLocationPickerOpen(false)}
+              className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted"
+              aria-label="Close location picker"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="space-y-4 p-5">
+            <div className="flex gap-2">
+              <input
+                value={locationSearch}
+                onChange={(e) => setLocationSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleLocationSearch();
+                  }
+                }}
+                placeholder="Search your building, street, or area"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                onClick={handleLocationSearch}
+                disabled={locatingAddress}
+                className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground disabled:opacity-50"
+                aria-label="Search location"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSelectLocation}
+              disabled={locatingAddress}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline disabled:opacity-60"
+            >
+              {locatingAddress ? "Finding your location..." : "Use my current location"}
+            </button>
+
+            <div
+              className="relative overflow-hidden rounded-xl border border-border bg-muted"
+              onPointerDown={(event) => {
+                if (!selectedLocation) return;
+
+                setDraggingPin(true);
+                event.currentTarget.setPointerCapture(event.pointerId);
+                const rect = event.currentTarget.getBoundingClientRect();
+                setMapPinPosition({
+                  x: Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100)),
+                  y: Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100)),
+                });
+              }}
+              onPointerMove={(event) => {
+                if (!draggingPin || !selectedLocation) return;
+
+                const rect = event.currentTarget.getBoundingClientRect();
+                setMapPinPosition({
+                  x: Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100)),
+                  y: Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100)),
+                });
+              }}
+              onPointerUp={(event) => {
+                if (!draggingPin || !selectedLocation) return;
+
+                setDraggingPin(false);
+                void pickMapPoint(event.clientX, event.clientY, event.currentTarget);
+              }}
+              onPointerCancel={() => setDraggingPin(false)}
+            >
+              {selectedMapSrc ? (
+                <>
+                  <iframe
+                    title="Selected delivery location"
+                    src={selectedMapSrc}
+                    className="h-64 w-full border-0 pointer-events-none"
+                    loading="lazy"
+                  />
+                  <div
+                    className="absolute grid h-10 w-10 -translate-x-1/2 -translate-y-full cursor-grab place-items-center text-red-600 drop-shadow-xl active:cursor-grabbing"
+                    style={{ left: `${mapPinPosition.x}%`, top: `${mapPinPosition.y}%` }}
+                    aria-hidden="true"
+                  >
+                    <MapPin className="h-10 w-10 fill-red-600 stroke-white stroke-[1.5]" />
+                  </div>
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-background/95 px-3 py-1 text-xs font-medium shadow">
+                    Drag or tap the map to move the pin
+                  </div>
+                </>
+              ) : (
+                <div className="grid h-64 place-items-center px-6 text-center text-sm text-muted-foreground">
+                  Search for an address or use current location to place the pin.
+                </div>
+              )}
+            </div>
+
+            {locationResults.length > 0 && (
+              <div className="max-h-40 space-y-2 overflow-y-auto">
+                {locationResults.map((location) => (
+                  <button
+                    key={`${location.latitude}-${location.longitude}`}
+                    type="button"
+                    onClick={() => setSelectedLocation(location)}
+                    className={`w-full rounded-xl border px-3 py-2 text-left text-xs leading-5 ${
+                      selectedLocation?.address === location.address
+                        ? "border-blue-500 bg-blue-50 text-blue-950"
+                        : "border-border hover:bg-muted"
+                    }`}
+                  >
+                    {location.address}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selectedLocation && (
+              <div className="rounded-xl border border-border bg-muted/50 px-3 py-3">
+                <p className="text-xs font-medium">Pinned address</p>
+                <p className="mt-1 text-sm leading-6">{selectedLocation.address}</p>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleUseSelectedLocation}
+              disabled={!selectedLocation}
+              className="w-full rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              Confirm address
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 
