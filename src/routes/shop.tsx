@@ -176,7 +176,7 @@ const selectedItem = {
       <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
         <div className="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
           <div className="min-w-0">
-            <div className="relative glow-stage aspect-square flex items-center justify-center bg-background p-3 sm:p-6">
+            <div className="relative aspect-square flex items-center justify-center bg-background p-3 sm:p-6">
               <Carousel className="w-full" setApi={setApi}>
                 <CarouselContent>
                   {media.map((item, idx) => (
