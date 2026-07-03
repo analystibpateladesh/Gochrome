@@ -4,12 +4,11 @@ import { PageHeader } from "@/components/PageHeader";
 import { CheckCircle, Plus, Star, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
-import single from "@/assets/chrome-typec-single.png";
-import jack from "@/assets/chrome-typec.png";
-import a from "@/assets/chrome-ist.png";
-import b from "@/assets/chrome-3rd.png";
-import c from "@/assets/chrome-iind.png";
-import heart from "@/assets/chrome-heart.png";
+import single from "@/assets/1.png";
+import jack from "@/assets/2.png";
+import a from "@/assets/3.png";
+import b from "@/assets/4.png";
+import c from "@/assets/5.jpg";
 import video from "@/assets/chrome_video.mp4";
 import { type ReactNode, useState, useEffect } from "react";
 import {
@@ -90,12 +89,11 @@ function Shop() {
   const nav = useNavigate();
   
   const media = [
-    { type: "image", src: b },
-    { type: "image", src: c },
-    { type: "image", src: a },
     { type: "image", src: single },
     { type: "image", src: jack },
-    { type: "image", src: heart },
+    { type: "image", src: a },
+    { type: "image", src: b },
+    { type: "image", src: c },
     { type: "video", src: video },
   ];
   
@@ -240,23 +238,18 @@ const selectedItem = {
               <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
               <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
             </div>
-            <div className="mt-6 flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
-                <p className="text-sm">Copper Ring Speakers</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
-                <p className="text-sm">Premium Chrome Finish</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-chrome flex-shrink-0 mt-0.5" />
-                <p className="text-sm">Built for Daily Use</p>
-              </div>
-            </div>
-            <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm font-medium text-yellow-900">Chrome Earphones</p>
-              <p className="text-xs text-yellow-700 mt-1">Limited Edition</p>
+            <div className="mt-8">
+              <label className="block text-sm font-medium mb-3">Select Port Type</label>
+              <Select value={selectedPort} onValueChange={handlePortChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a port" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="type-c">USB type-C</SelectItem>
+                  <SelectItem value="lightning">Lightning</SelectItem>
+                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
@@ -282,31 +275,12 @@ const selectedItem = {
                 </div>
               </label>
             </div>
-            <div className="mt-8">
-              <label className="block text-sm font-medium mb-3">Select Port Type</label>
-              <Select value={selectedPort} onValueChange={handlePortChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a port" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="type-c">USB type-C</SelectItem>
-                  <SelectItem value="lightning">Lightning</SelectItem>
-                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
-                </SelectContent>
-              </Select>
-              {outOfStockPorts.includes(selectedPort) && (
-                
-                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start justify-between">
-                  <p className="text-sm font-medium text-red-900">Next Drop Pre-Orders Live - launching Soon</p>
-                </div>
-              )}
-            </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-  {isSoldOutOption ? "Pre-order" : "Buy Now"}
+  {"Buy Now"}
 </button>
 <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-  {isSoldOutOption ? "Add to Cart" : "To Bag"}
+  {"Add to Cart" }
 </button>
             </div>
             <div className="mt-6 border-y border-border">

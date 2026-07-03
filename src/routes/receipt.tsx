@@ -105,7 +105,7 @@ function Receipt() {
       <div id="receipt-preview" className="mt-8 card-soft p-6">
         <div className="flex justify-between">
           <div>
-            <div className="font-medium">Order {order.orderId}</div>
+            <div className="font-medium">Order ID: {order.orderId}</div>
             <div className="text-sm text-muted-foreground">Razorpay Order ID: {order.razorpayOrderId || "-"}</div>
             <div className="text-sm text-muted-foreground">Payment ID: {order.paymentId || "-"}</div>
             <div className="text-sm text-muted-foreground">{new Date(order.date).toLocaleString()}</div>

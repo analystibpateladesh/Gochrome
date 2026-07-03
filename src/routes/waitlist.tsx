@@ -62,12 +62,12 @@ function Waitlist() {
 
   return (
     <section className="mx-auto max-w-lg px-6 py-20">
-      <h1 className="text-4xl font-semibold tracking-tight mb-8">Join Waitlist</h1>
+      <h1 className="text-4xl font-semibold tracking-tight mb-8">GoChrome Email List</h1>
       <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="space-y-8">
 
         <Section title="Contact">
           <Field name="email" label="Email" type="email" required />
-          <Field name="phone" label="Phone" type="tel" required />
+          {/*<Field name="phone" label="Phone" type="tel" required />*/}
         </Section>
 
         <Section title="Personal Details">
@@ -89,7 +89,7 @@ function Waitlist() {
             className="mt-0.5 h-4 w-4 accent-primary cursor-pointer"
           />
           <label htmlFor="notify" className="text-sm cursor-pointer select-none">
-            Notify me when they're back in stock
+            Be the first to know about limited-edition product drops, new colour launches, and exclusive subscriber-only discounts
           </label>
         </div>
 
@@ -99,7 +99,7 @@ function Waitlist() {
           onClick={joinWaitlist}
           className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Processing..." : "Join Waitlist (No Payment)"}
+          {loading ? "Processing..." : "Join"}
         </button>
 
       </form>

@@ -43,6 +43,12 @@ type NominatimPlace = {
   lon: string;
 };
 
+const generateOrderId = () => {
+  const randomPart = Math.random().toString(36).substring(2, 10).toUpperCase();
+  const timestampPart = Date.now().toString().slice(-6);
+  return `GC-${randomPart}${timestampPart}`;
+};
+
 function Checkout() {
   const { items, total, setQty, remove, replaceItems, add, clear } = useCart();
   const nav = useNavigate();
@@ -400,7 +406,7 @@ function Checkout() {
     const form = e.currentTarget;
     const data = new FormData(form);
     const customerName = `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim();
-    const orderId = `GC-PREORDER-${Date.now()}`;
+    const orderId = generateOrderId();
 
     try {
       await loadRazorpayCheckout();
@@ -449,7 +455,7 @@ function Checkout() {
 
         try {
           await saveToGoogleSheets({
-            type: "preorder",
+            type: "order",
             orderId,
             paymentId: response.razorpay_payment_id,
             razorpayOrderId: response.razorpay_order_id || razorpayOrder.id,
@@ -518,7 +524,7 @@ function Checkout() {
         amount: razorpayOrder.amount,
         currency: "INR",
         name: "GoChrome",
-        description: `Pre-order ${orderId}`,
+        description: `Order ${orderId}`,
         order_id: razorpayOrder.id,
         prefill: {
           name: customerName,
@@ -633,7 +639,7 @@ function Checkout() {
     <>
     <section className="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-[1fr_400px] gap-12">
       <div>
-        <h1 className="text-4xl font-semibold tracking-tight mb-8">Pre-order</h1>
+        <h1 className="text-4xl font-semibold tracking-tight mb-8">Checkout</h1>
         <form ref={formRef} onSubmit={submit} className="space-y-8">
           <Section title="Contact">
             <Field name="email" label="Email" type="email" required />
@@ -677,7 +683,7 @@ function Checkout() {
               disabled={loading || !items.length}
               className="w-full px-7 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
             >
-              {loading ? "Processing..." : `Pre-order (Pay ₹${total.toLocaleString("en-IN")})`}
+              {loading ? "Processing..." : `Pay ₹${total.toLocaleString("en-IN")}`}
             </button>
           </div>
         </form>
@@ -696,9 +702,6 @@ function Checkout() {
                   <div className="flex-1 text-sm">
                     <div className="flex items-start justify-between">
                       <p className="font-medium">{i.name}</p>
-                      {i.isSoldOut && (
-                        <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">Pre-order</span>
-                      )}
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="inline-flex items-center border border-border rounded-full">
@@ -742,22 +745,22 @@ function Checkout() {
             </div>
 
             <div className="border-t border-border mt-5 pt-4 space-y-1.5 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>₹{total.toLocaleString("en-IN")}</span>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>₹{total.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span>Free</span>
+                </div>
+                <div className="flex justify-between text-base font-medium pt-2">
+                  <span>Total</span>
+                  <span>₹{total.toLocaleString("en-IN")}</span>
+                </div>
+                <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">
+                  Your order will be processed once payment is complete.
+                </p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>Free</span>
-              </div>
-              <div className="flex justify-between text-base font-medium pt-2">
-                <span>Total</span>
-                <span>₹{total.toLocaleString("en-IN")}</span>
-              </div>
-              <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">
-                Items are currently on pre-order. You'll be notified when they're dispatched.
-              </p>
-            </div>
           </>
         )}
       </aside>

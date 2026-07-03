@@ -11,7 +11,7 @@ const nav = [
   { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/waitlist", label: "Join Waitlist" },
+  { to: "/waitlist", label: "GoChrome Email List" },
 ];
 
 export function Header() {
