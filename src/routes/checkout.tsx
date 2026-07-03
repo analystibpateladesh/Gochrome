@@ -509,11 +509,11 @@ function Checkout() {
           }
 
           clear();
-          toast.success("Payment successful! You've joined the waitlist. Download your receipt below.");
+          toast.success("Payment successful! Your order has been received. Download your receipt.");
           nav({ to: "/receipt" });
         } catch (error) {
           console.error(error);
-          toast.error("Payment worked, but order was not saved. Check VITE_ORDERS_SHEETS_WEB_APP_URL in Vercel.");
+          toast.error("Payment worked, but order was not saved. Please contact at 'gochromeaudio@gmail.com' with the payment details.");
         } finally {
           setLoading(false);
         }

@@ -157,13 +157,13 @@ const selectedItem = {
   
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
-    toast.success(isSoldOutOption ? "Added to pre-order" : "Added to bag");
+    toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
   };
   
   const handleBuyNow = () => {
     add(selectedItem, selectedQty);
     if (isSoldOutOption) {
-      toast.success("Added to pre-order. Proceeding to checkout...");
+      toast.success("Added to Order. Proceeding to checkout...");
     } else {
       toast.success("Added to bag. Proceeding to checkout...");
     }
