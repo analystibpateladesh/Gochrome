@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useTheme } from "@/lib/theme";
 import { useCart } from "@/lib/cart";
-import { Moon, Sun, ShoppingBag, Menu, X } from "lucide-react";
+import { Moon, Sun, ShoppingBag, Menu, X, Map } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/gochrome-wordmark.png";
 
@@ -39,6 +39,13 @@ export function Header() {
           <button onClick={toggle} aria-label="Toggle theme" className="h-9 w-9 grid place-items-center rounded-full hover:bg-accent transition-colors">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
+          <a
+  href="src/routes/tracker.html"
+  aria-label="Open tracker"
+  className="h-4 px-0 rounded-full hover:bg-accent/10 transition-colors bg-transparent flex items-center gap-2 text-sm"
+>
+  <span className="text-xs font-medium">Track Order</span>
+</a>
           <Link to="/cart" className="h-9 px-3 rounded-full hover:bg-accent transition-colors flex items-center gap-2 text-sm">
             <ShoppingBag className="h-4 w-4" />
             {count > 0 && <span className="text-xs font-medium">{count}</span>}
