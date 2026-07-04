@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 const cols = [
   { title: "Shop", links: [["/chrome","Chrome Earphones"],["/shop","All Products"],["/shop","Accessories"],["/cart","Cart"]] },
   { title: "Company", links: [["/about","About"],["/careers","Careers"],["/privacy","Privacy Policy"]] },
-  { title: "Support", links: [["/contact","Contact Us"],["/shipping","Shipping"]] },
+  { title: "Support", links: [["/contact","Contact Us"],["/shipping","Shipping"],["/track","Track Order"]] },
 ] as const;
 
 export function Footer() {
