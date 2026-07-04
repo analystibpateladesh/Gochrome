@@ -39,13 +39,9 @@ export function Header() {
           <button onClick={toggle} aria-label="Toggle theme" className="h-9 w-9 grid place-items-center rounded-full hover:bg-accent transition-colors">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <a
-  href="src/routes/tracker.html"
-  aria-label="Open tracker"
-  className="h-4 px-0 rounded-full hover:bg-accent/10 transition-colors bg-transparent flex items-center gap-2 text-sm"
->
-  <span className="text-xs font-medium">Track Order</span>
-</a>
+          <Link to="/track" aria-label="Track order" className="h-4 px-0 rounded-full hover:bg-accent transition-colors flex items-center gap-2 text-sm">
+            <span className="text-xs font-medium">Track Order</span>
+          </Link>
           <Link to="/cart" className="h-9 px-3 rounded-full hover:bg-accent transition-colors flex items-center gap-2 text-sm">
             <ShoppingBag className="h-4 w-4" />
             {count > 0 && <span className="text-xs font-medium">{count}</span>}
