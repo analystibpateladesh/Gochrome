@@ -84,7 +84,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "type-c-lightning"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -276,7 +276,6 @@ const selectedItem = {
             {isSoldOutOption && (
               <p className="mt-4 text-sm font-medium text-red-500">
                 Out of stock - we're restocking soon, you'll be notified.
-                Thank you for your patience & belief in our products.
               </p>
             )}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
