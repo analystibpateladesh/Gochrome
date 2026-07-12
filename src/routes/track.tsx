@@ -90,7 +90,7 @@ function Track() {
             type="text"
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
-            placeholder="e.g. GC-PREORDER-1781418622021"
+            placeholder="e.g. GC-PREORDER-1781418482642"
             autoComplete="off"
             className="flex-1 bg-transparent px-3 py-3 font-mono text-sm text-foreground outline-none placeholder:font-sans placeholder:text-muted-foreground"
           />

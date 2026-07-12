@@ -84,7 +84,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "type-c-lightning"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -156,17 +156,15 @@ const selectedItem = {
 };
   
   const handleAddToBag = () => {
+    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
-    toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
+    toast.success("Added to bag");
   };
   
   const handleBuyNow = () => {
+    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
-    if (isSoldOutOption) {
-      toast.success("Added to Order. Proceeding to checkout...");
-    } else {
-      toast.success("Added to bag. Proceeding to checkout...");
-    }
+    toast.success("Added to bag. Proceeding to checkout...");
     nav({ to: "/checkout" });
   };
 
@@ -275,13 +273,27 @@ const selectedItem = {
                 </div>
               </label>
             </div>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-  {"Buy Now"}
-</button>
-<button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-  {"Add to Cart" }
-</button>
+            {isSoldOutOption && (
+              <p className="mt-4 text-sm font-medium text-red-500">
+                Out of stock - we're restocking soon, you'll be notified.
+                Thank you for your patience & belief in our products.
+              </p>
+            )}
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={handleBuyNow}
+                disabled={isSoldOutOption}
+                className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
+              >
+                {"Buy Now"}
+              </button>
+              <button
+                onClick={handleAddToBag}
+                disabled={isSoldOutOption}
+                className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              >
+                {"Add to Cart"}
+              </button>
             </div>
             <div className="mt-6 border-y border-border">
               {productDetails.map((item) => (
