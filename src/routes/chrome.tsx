@@ -286,7 +286,7 @@ const selectedItem = {
                 disabled={isSoldOutOption}
                 className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
               >
-                {selectedPort === "type-c" ? "Preorder" : "Buy Now"}
+                {selectedPort === "type-c" ? "Pre-Order Now" : "Buy Now"}
               </button>
               <button
                 onClick={handleAddToBag}
