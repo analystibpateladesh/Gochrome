@@ -55,19 +55,6 @@ const productDetails = [
     q: "Is there a built-in mic?",
     a: "Yes. Chrome Earphones include a built-in microphone for clear calls, voice notes, online classes, and everyday conversations while staying connected.",
   },
-  {
-    q: "7-Day Return & Refund Policy",
-    a:(
-      <div className="space-y-4">
-        <p>
-          Returns and refunds are only available for products that arrive damaged or defective.</p>
-        <p>
-          To be eligible for a return or refund, you must record a complete unboxing video from the moment the sealed package is opened until the product is fully inspected. Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.
-        </p>
-        <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
-      </div>
-    ),
-  },
 ];
 
 const portPricing: Record<string, { buyOne: number; buyTwo: number; buyOneMrp: number; buyTwoMrp: number }> = {
