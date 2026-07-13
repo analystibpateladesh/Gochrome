@@ -9,7 +9,6 @@ import jack from "@/assets/2.png";
 import a from "@/assets/3.png";
 import b from "@/assets/4.png";
 import c from "@/assets/5.jpg";
-import video from "@/assets/chrome_video.mp4";
 import { type ReactNode, useState, useEffect } from "react";
 import {
   Carousel,
@@ -94,7 +93,6 @@ function Shop() {
     { type: "image", src: a },
     { type: "image", src: b },
     { type: "image", src: c },
-    { type: "video", src: video },
   ];
   
   useEffect(() => {
