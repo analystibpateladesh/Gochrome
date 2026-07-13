@@ -84,7 +84,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "type-c-lightning"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -273,9 +273,13 @@ const selectedItem = {
                 </div>
               </label>
             </div>
-            {isSoldOutOption && (
+            {selectedPort === "type-c" ? (
               <p className="mt-4 text-sm font-medium text-red-500">
-                Out of stock - we're restocking soon, you'll be notified.
+                Secure your order before the next batch sells out, we are restocking very soon.
+              </p>
+            ) : isSoldOutOption && (
+              <p className="mt-4 text-sm font-medium text-red-500">
+                Out of stock — we're restocking soon, you'll be notified.
               </p>
             )}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -284,7 +288,7 @@ const selectedItem = {
                 disabled={isSoldOutOption}
                 className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
               >
-                {"Buy Now"}
+                {selectedPort === "type-c" ? "Pre-Order Now" : "Buy Now"}
               </button>
               <button
                 onClick={handleAddToBag}
