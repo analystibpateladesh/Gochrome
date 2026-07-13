@@ -61,11 +61,9 @@ const productDetails = [
     a:(
       <div className="space-y-4">
         <p>
-          Returns and refunds are only available for products that arrive damaged or defective.</p>
+          We accept returns and refunds for products that arrive damaged or defective.</p>
         <p>
-          To be eligible for a return or refund, you must record a complete unboxing video from the moment the sealed package is opened until the product is fully inspected. Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.
-        </p>
-        <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
+          To be eligible for a return or refund,please refer to "gochrome.in/shipping" & Contact us at "gochromeaudio@gmail.com" within 7 days of receiving the product.
       </div>
     ),
   },
@@ -275,11 +273,11 @@ const selectedItem = {
             </div>
             {selectedPort === "type-c" ? (
               <p className="mt-4 text-sm font-medium text-red-500">
-                Preorder now to get the best, we are restocking soon.
+                Secure your order before the next batch sells out, we are restocking very soon.
               </p>
             ) : isSoldOutOption && (
               <p className="mt-4 text-sm font-medium text-red-500">
-                Out of stock — we're restocking soon, you'll be notified.
+                Out of stock - we're restocking soon, you'll be notified.
               </p>
             )}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">

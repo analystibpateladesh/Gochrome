@@ -7,11 +7,11 @@ import logo from "@/assets/gochrome-wordmark.png";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/chrome", label: "Chrome Earphones" },
-  { to: "/shopgc", label: "Shop" },
+  { to: "/chrome", label: "store" },
+  {/*{ to: "/shopgc", label: "Shop" },*/}
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/waitlist", label: "GoChrome Email List" },
+  { to: "/waitlist", label: "GoChrome Waitlist" },
   { to: "/track", label: "Track Order" }
 ];
 

@@ -54,7 +54,7 @@ function Home() {
           </p>**/}
 
           <div className="mt-10 flex items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.15s" }}>
-            <Link to="/shop" className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">Buy Now</Link>
+            <Link to="/chrome" className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">Buy Now</Link>
             <Link to="/technology" className="px-7 py-3.5 rounded-full border border-border text-sm font-medium hover:bg-accent transition flex items-center gap-2">
               Learn more <ArrowRight className="h-4 w-4" />
             </Link>
@@ -166,7 +166,7 @@ function Home() {
               Mirror-Finish Design. Crafted with a polished chrome exterior that reflects light beautifully and delivers a bold, premium look. Experience crisp vocals, deep bass, and crystal-clear sound that brings your music, movies, and calls to life.Connect through Type-C and enjoy seamless audio with no charging, pairing, or interruptions.
 
             </p>
-            <Link to="/technology" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:underline">Explore the Beat<ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/technology" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:underline">Explore the Chrome Earphones<ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>
       </section>
@@ -229,7 +229,7 @@ function Home() {
         <div className="mx-auto max-w-4xl px-6 py-32 text-center">
           <h2 className="text-4xl md:text-6xl font-semibold tracking-tight">Hear what you've been missing.</h2>
           <p className="mt-4 text-muted-foreground text-lg">Order today. Free shipping.</p>
-          <Link to="/shop" className="mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90">
+          <Link to="/chrome" className="mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90">
             Reserve Chrome Earphones <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
