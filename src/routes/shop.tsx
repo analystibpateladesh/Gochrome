@@ -275,7 +275,7 @@ const selectedItem = {
             </div>
             {selectedPort === "type-c" ? (
               <p className="mt-4 text-sm font-medium text-red-500">
-                Secure your order before the next batch sells out, we are restocking very soon.
+                Preorder now to get the best, we are restocking soon.
               </p>
             ) : isSoldOutOption && (
               <p className="mt-4 text-sm font-medium text-red-500">
@@ -288,7 +288,7 @@ const selectedItem = {
                 disabled={isSoldOutOption}
                 className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
               >
-                {selectedPort === "type-c" ? "Pre-Order Now" : "Buy Now"}
+                {selectedPort === "type-c" ? "Preorder" : "Buy Now"}
               </button>
               <button
                 onClick={handleAddToBag}
