@@ -10,7 +10,7 @@ export const Route = createFileRoute("/products/$id")({
     return { meta: [{ title: `${p?.name ?? "Product"} — GoChrome` }, { name: "description", content: p?.tagline ?? "" }, { property: "og:image", content: p?.image ?? "" }] };
   },
   component: ProductPage,
-  notFoundComponent: () => <div className="p-20 text-center">Product not found. <Link to="/shop" className="underline">Shop</Link></div>,
+  notFoundComponent: () => <div className="p-20 text-center">Product not found. <Link to="/chrome" className="underline">Shop</Link></div>,
 });
 
 function ProductPage() {

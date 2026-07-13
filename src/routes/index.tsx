@@ -177,7 +177,7 @@ function Home() {
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">For Everyday Listening</p>
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mt-3">Sound you can rely on.</h2>
           <p className="mt-5 text-muted-foreground text-lg leading-relaxed">Clear vocals, deep bass, and balanced audio designed for music, calls, and everything in between.</p>
-          <Link to="/shop" className="mt-8 inline-block px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">Shop GoChrome</Link>
+          <Link to="/chrome" className="mt-8 inline-block px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">Shop GoChrome</Link>
         </div>
         <div className="relative aspect-square rounded-3xl overflow-hidden order-1 md:order-2 shadow-elegant">
           <img src={lifestyle} alt="Listener wearing GoChrome earphones" loading="lazy" className="w-full h-full object-cover" />

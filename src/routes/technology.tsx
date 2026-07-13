@@ -22,7 +22,7 @@ export const Route = createFileRoute("/technology")({
       <section className="mx-auto max-w-4xl px-6 py-32 text-center">
         <h2 className="text-4xl md:text-6xl font-semibold tracking-tight">Ready to listen?</h2>
         <p className="mt-4 text-muted-foreground text-lg">Order now. Free shipping.</p>
-        <Link to="/shop" className="mt-8 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 inline-flex items-center gap-2">
+        <Link to="/chrome" className="mt-8 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 inline-flex items-center gap-2">
           Reserve yours <ArrowRight className="h-4 w-4" />
         </Link>
       </section>

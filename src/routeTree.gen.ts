@@ -74,8 +74,8 @@ const ShopgcRoute = ShopgcRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
+  id: '/chrome',
+  path: '/chrome',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShippingRoute = ShippingRouteImport.update({

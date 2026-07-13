@@ -16,7 +16,7 @@ function Cart() {
         <ShoppingBag className="h-10 w-10 mx-auto text-muted-foreground" />
         <h1 className="mt-6 text-4xl font-semibold tracking-tight">Your bag is empty</h1>
         <p className="mt-3 text-muted-foreground">Discover the lineup.</p>
-        <Link to="/shop" className="mt-8 inline-block px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium">Shop GoChrome</Link>
+        <Link to="/chrome" className="mt-8 inline-block px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium">Shop GoChrome</Link>
       </section>
     );
   }

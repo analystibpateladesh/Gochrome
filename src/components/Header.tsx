@@ -7,7 +7,7 @@ import logo from "@/assets/gochrome-wordmark.png";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/chrome", label: "store" },
+  { to: "/chrome", label: "Store" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
   { to: "/waitlist", label: "GoChrome Waitlist" },
