@@ -16,6 +16,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TechnologyRouteImport } from './routes/technology'
 import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as ShopgcRouteImport } from './routes/shopgc'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as ReceiptRouteImport } from './routes/receipt'
@@ -65,6 +66,11 @@ const SustainabilityRoute = SustainabilityRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopgcRoute = ShopgcRouteImport.update({
+  id: '/shopgc',
+  path: '/shopgc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
+  '/shopgc': typeof ShopgcRoute
   '/support': typeof SupportRoute
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
+  '/shopgc': typeof ShopgcRoute
   '/support': typeof SupportRoute
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/receipt': typeof ReceiptRoute
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
+  '/shopgc': typeof ShopgcRoute
   '/support': typeof SupportRoute
   '/sustainability': typeof SustainabilityRoute
   '/technology': typeof TechnologyRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/receipt'
     | '/shipping'
     | '/shop'
+    | '/shopgc'
     | '/support'
     | '/sustainability'
     | '/technology'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/receipt'
     | '/shipping'
     | '/shop'
+    | '/shopgc'
     | '/support'
     | '/sustainability'
     | '/technology'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/receipt'
     | '/shipping'
     | '/shop'
+    | '/shopgc'
     | '/support'
     | '/sustainability'
     | '/technology'
@@ -306,6 +318,7 @@ export interface RootRouteChildren {
   ReceiptRoute: typeof ReceiptRoute
   ShippingRoute: typeof ShippingRoute
   ShopRoute: typeof ShopRoute
+  ShopgcRoute: typeof ShopgcRoute
   SupportRoute: typeof SupportRoute
   SustainabilityRoute: typeof SustainabilityRoute
   TechnologyRoute: typeof TechnologyRoute
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopgc': {
+      id: '/shopgc'
+      path: '/shopgc'
+      fullPath: '/shopgc'
+      preLoaderRoute: typeof ShopgcRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -490,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReceiptRoute: ReceiptRoute,
   ShippingRoute: ShippingRoute,
   ShopRoute: ShopRoute,
+  ShopgcRoute: ShopgcRoute,
   SupportRoute: SupportRoute,
   SustainabilityRoute: SustainabilityRoute,
   TechnologyRoute: TechnologyRoute,
