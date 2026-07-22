@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCart } from "@/lib/cart";
+import { useCart, computeLineTotal, computeEffectiveUnitPrice } from "@/lib/cart";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/cart")({
@@ -30,7 +30,14 @@ function Cart() {
             <img src={i.image} alt={i.name} className="h-24 w-24 rounded-xl object-cover bg-muted" />
             <div className="flex-1">
               <p className="font-medium">{i.name}</p>
-              <p className="text-sm text-muted-foreground">₹{i.price.toLocaleString("en-IN")}</p>
+              <p className="text-sm text-muted-foreground">
+                ₹{i.price.toLocaleString("en-IN")}
+                {i.qty >= 2 && computeEffectiveUnitPrice(i) < i.price && (
+                  <span className="ml-2 text-xs text-primary">
+                    2 for ₹{computeLineTotal({ ...i, qty: 2 }).toLocaleString("en-IN")}
+                  </span>
+                )}
+              </p>
               <div className="mt-3 inline-flex items-center border border-border rounded-full">
                 <button onClick={() => setQty(i.id, i.qty - 1)} className="h-8 w-8 grid place-items-center"><Minus className="h-3 w-3" /></button>
                 <span className="w-8 text-center text-sm">{i.qty}</span>
@@ -38,7 +45,7 @@ function Cart() {
               </div>
             </div>
             <div className="text-right">
-              <p className="font-medium">₹{(i.price * i.qty).toLocaleString("en-IN")}</p>
+              <p className="font-medium">₹{computeLineTotal(i).toLocaleString("en-IN")}</p>
               <button onClick={() => remove(i.id)} className="mt-2 text-muted-foreground hover:text-destructive text-xs inline-flex items-center gap-1"><Trash2 className="h-3 w-3" />Remove</button>
             </div>
           </div>
