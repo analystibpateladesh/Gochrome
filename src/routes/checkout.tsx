@@ -732,7 +732,7 @@ function Checkout() {
                   className="flex-1 text-sm px-3 py-2 rounded-lg border border-border bg-background"
                 >
                   <option value="type-c">USB Type-C (₹799)</option>
-                  {/*<option value="lightning">Lightning (₹899)</option>*/}
+                  <option value="lightning">Lightning (₹899)</option>
                 </select>
                 <button
                   type="button"
@@ -758,7 +758,7 @@ function Checkout() {
                   <span>₹{total.toLocaleString("en-IN")}</span>
                 </div>
                 <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-border">
-                  Secure your order before the next batch sells out, we are restocking very soon.
+                  Your order will be processed once payment is complete.
                 </p>
               </div>
           </>

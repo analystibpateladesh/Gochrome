@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { featured } from "@/lib/products";
 import { PageHeader } from "@/components/PageHeader";
-import { Plus, Star, X } from "lucide-react";
+import { CheckCircle, Plus, Star, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
 import single from "@/assets/1.png";
@@ -51,20 +51,21 @@ const productDetails = [
     q: "How's the sound quality?",
     a: "Chrome Earphones deliver clear vocals, deep bass, and balanced sound, making your music, calls, movies, and everyday listening more enjoyable than ever before.",
   },
-
+  
   {
     q: "Is there a built-in mic?",
     a: "Yes. Chrome Earphones include a built-in microphone for clear calls, voice notes, online classes, and everyday conversations while staying connected.",
   },
   {
     q: "7-Day Return & Refund Policy",
-    a: (
+    a:(
       <div className="space-y-4">
         <p>
-          We accept returns and refunds for products that arrive damaged or defective.</p>
+          Returns and refunds are only available for products that arrive damaged or defective.</p>
         <p>
-          To be eligible for a return or refund,please refer to "gochrome.in/shipping" & Contact us at "gochromeaudio@gmail.com" within 7 days of receiving the product.
+          To be eligible for a return or refund, you must record a complete unboxing video from the moment the sealed package is opened until the product is fully inspected. Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.
         </p>
+        <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
       </div>
     ),
   },
@@ -83,10 +84,10 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["lightning", "type-c-lightning"]);
+  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
-
+  
   const media = [
     { type: "image", src: single },
     { type: "image", src: jack },
@@ -95,75 +96,77 @@ function Shop() {
     { type: "image", src: c },
     { type: "video", src: video },
   ];
-
+  
   useEffect(() => {
     if (!api) return;
-
+    
     const onSelect = () => {
       setSelectedImage(api.selectedScrollSnap());
     };
-
+    
     api.on("select", onSelect);
     return () => api.off("select", onSelect);
   }, [api]);
-
+  
   const handleThumbnailClick = (idx: number) => {
     if (api) {
       api.scrollTo(idx);
     }
   };
 
-  const handlePortChange = (port: string) => {
-    setSelectedPort(port);
+const handlePortChange = (port: string) => {
+  setSelectedPort(port);
 
-    if (port === "type-c-lightning") {
-      setSelectedBundle("buy2");
-    }
-  };
+  if (port === "type-c-lightning") {
+    setSelectedBundle("buy2");
+  }
+};
 
-  const pricing = portPricing[selectedPort] ?? portPricing["type-c"];
-  const buyOnePrice = pricing.buyOne;
-  const buyTwoPrice = pricing.buyTwo;
-  const singleProductMrp = pricing.buyOneMrp;
-  const buyTwoMrp = pricing.buyTwoMrp;
-  const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
-  const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
-  const selectedQty = selectedBundle === "buy2" ? 2 : 1;
-  const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-  const selectedUnitPrice = selectedTotal / selectedQty;
-  const isSoldOutOption = outOfStockPorts.includes(selectedPort);
-  const isMixedPair = selectedPort === "type-c-lightning";
-  const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-  const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
-  const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
+const pricing = portPricing[selectedPort] ?? portPricing["type-c"];
+const buyOnePrice = pricing.buyOne;
+const buyTwoPrice = pricing.buyTwo;
+const singleProductMrp = pricing.buyOneMrp;
+const buyTwoMrp = pricing.buyTwoMrp;
+const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
+const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
+const selectedQty = selectedBundle === "buy2" ? 2 : 1;
+const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
+const selectedUnitPrice = selectedTotal / selectedQty;
+const isSoldOutOption = outOfStockPorts.includes(selectedPort);
+const isMixedPair = selectedPort === "type-c-lightning";
+const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
+const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
+const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
+  
+const portLabel: Record<string, string> = {
+  "type-c": "Type-C",
+  "lightning": "Lightning",
+  "type-c-lightning": "Type-C + Lightning",
+};
 
-  const portLabel: Record<string, string> = {
-    "type-c": "Type-C",
-    "lightning": "Lightning",
-    "type-c-lightning": "Type-C + Lightning",
-  };
-
-  const selectedItem = {
-    id: `${featured.id}-${selectedBundle}-${selectedPort}`,
-    name: selectedBundle === "buy2"
-      ? `${featured.name} (${portLabel[selectedPort]}) - Buy 2`
-      : `${featured.name} (${portLabel[selectedPort]})`,
-    price: selectedUnitPrice,
-    image: featured.image,
-    isSoldOut: isSoldOutOption,
-    portType: portLabel[selectedPort],
-  };
-
+const selectedItem = {
+  id: `${featured.id}-${selectedBundle}-${selectedPort}`,
+  name: selectedBundle === "buy2"
+    ? `${featured.name} (${portLabel[selectedPort]}) - Buy 2`
+    : `${featured.name} (${portLabel[selectedPort]})`,
+  price: selectedUnitPrice,
+  image: featured.image,
+  isSoldOut: isSoldOutOption,
+  portType: portLabel[selectedPort],
+};
+  
   const handleAddToBag = () => {
-    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
-    toast.success("Added to bag");
+    toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
   };
-
+  
   const handleBuyNow = () => {
-    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
-    toast.success("Added to bag. Proceeding to checkout...");
+    if (isSoldOutOption) {
+      toast.success("Added to Order. Proceeding to checkout...");
+    } else {
+      toast.success("Added to bag. Proceeding to checkout...");
+    }
     nav({ to: "/checkout" });
   };
 
@@ -180,16 +183,16 @@ function Shop() {
                     <CarouselItem key={idx}>
                       <div className="flex items-center justify-center h-full">
                         {item.type === "image" ? (
-                          <img
-                            src={item.src}
-                            alt={featured.name}
-                            loading="lazy"
-                            className="w-[92%] h-[92%] object-contain"
+                          <img 
+                            src={item.src} 
+                            alt={featured.name} 
+                            loading="lazy" 
+                            className="w-[92%] h-[92%] object-contain" 
                           />
                         ) : (
-                          <video
-                            src={item.src}
-                            controls
+                          <video 
+                            src={item.src} 
+                            controls 
                             className="w-[92%] h-[92%] object-contain"
                             preload="metadata"
                           >
@@ -232,8 +235,8 @@ function Shop() {
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
-              <span className={`text-lg text-muted-foreground line-through`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
-              <span className={`text-sm font-semibold text-chrome`}>SAVE {displayedSavings}%</span>
+              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
+              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Select Port Type</label>
@@ -256,8 +259,8 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
@@ -267,35 +270,18 @@ function Shop() {
                   <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
             </div>
-            {selectedPort === "type-c" ? (
-              <p className="mt-4 text-sm font-medium text-red-500">
-                Secure your order before the next batch sells out, we are restocking very soon.
-              </p>
-            ) : isSoldOutOption && (
-              <p className="mt-4 text-sm font-medium text-red-500">
-                Out of stock - we're restocking soon, you'll be notified.
-              </p>
-            )}
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <button
-                onClick={handleBuyNow}
-                disabled={isSoldOutOption}
-                className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
-              >
-                {selectedPort === "type-c" ? "Pre-Order Now" : "Buy Now"}
-              </button>
-              <button
-                onClick={handleAddToBag}
-                disabled={isSoldOutOption}
-                className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-              >
-                {"Add to Cart"}
-              </button>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
+  {"Buy Now"}
+</button>
+<button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
+  {"Add to Cart" }
+</button>
             </div>
             <div className="mt-6 border-y border-border">
               {productDetails.map((item) => (
