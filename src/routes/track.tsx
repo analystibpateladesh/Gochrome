@@ -8,7 +8,7 @@ export const Route = createFileRoute("/track")({
 });
 
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbxmKz5xAqK_8ZXL-QYXDaxY7tyBnIwR_FJxG_NbmliBLfw26R5KNIiYnQQEA49RYqu-kg/exec";
+  "https://script.google.com/macros/s/AKfycbyQ1pvtPZ4I1Fz_o8LQyqnYlMUId8oxWD8nBceE9OUvNMbjUnuvsWUx50mLEXS0dxM02g/exec";
 
 const STAGE_ORDER = ["Ordered", "Packed", "Dispatched", "Shipped", "Delivered"];
 
