@@ -8,6 +8,7 @@ import {
 import { ThemeProvider } from "@/lib/theme";
 import { CartProvider } from "@/lib/cart";
 import { Layout } from "@/components/Layout";
+import { ChatWidget } from "@/components/ChatWidget";
 
 function NotFoundComponent() {
   return (
@@ -92,6 +93,7 @@ function RootComponent() {
       <ThemeProvider>
         <CartProvider>
           <Layout />
+          <ChatWidget />
         </CartProvider>
       </ThemeProvider>
     </QueryClientProvider>
