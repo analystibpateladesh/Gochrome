@@ -270,7 +270,6 @@ const selectedItem = {
                 <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
                   <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
                   <p>
-                    This port option is currently available for{" "}
                     <span className="font-semibold">Pre-order</span> only. Your order
                     will be shipped as soon as new stock arrives.
                   </p>
