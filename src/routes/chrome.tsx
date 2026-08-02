@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { featured } from "@/lib/products";
 import { PageHeader } from "@/components/PageHeader";
-import { CheckCircle, Plus, Star, X } from "lucide-react";
+import { AlertTriangle, CheckCircle, Plus, Star, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
 import single from "@/assets/1.png";
@@ -51,7 +51,7 @@ const productDetails = [
     q: "How's the sound quality?",
     a: "Chrome Earphones deliver clear vocals, deep bass, and balanced sound, making your music, calls, movies, and everyday listening more enjoyable than ever before.",
   },
-  
+
   {
     q: "Is there a built-in mic?",
     a: "Yes. Chrome Earphones include a built-in microphone for clear calls, voice notes, online classes, and everyday conversations while staying connected.",
@@ -78,6 +78,9 @@ const portPricing: Record<string, { buyOne: number; buyTwo: number; buyOneMrp: n
   "jack": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3019 },
 };
 
+// Ports that are available for pre-order only (not in stock yet)
+const preorderPorts = ["lightning", "type-c-lightning"];
+
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
   const [selectedImage, setSelectedImage] = useState(0);
@@ -87,7 +90,7 @@ function Shop() {
   const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
-  
+
   const media = [
     { type: "image", src: single },
     { type: "image", src: jack },
@@ -96,18 +99,18 @@ function Shop() {
     { type: "image", src: c },
     { type: "video", src: video },
   ];
-  
+
   useEffect(() => {
     if (!api) return;
-    
+
     const onSelect = () => {
       setSelectedImage(api.selectedScrollSnap());
     };
-    
+
     api.on("select", onSelect);
     return () => api.off("select", onSelect);
   }, [api]);
-  
+
   const handleThumbnailClick = (idx: number) => {
     if (api) {
       api.scrollTo(idx);
@@ -134,10 +137,11 @@ const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const selectedUnitPrice = selectedTotal / selectedQty;
 const isSoldOutOption = outOfStockPorts.includes(selectedPort);
 const isMixedPair = selectedPort === "type-c-lightning";
+const isPreorder = preorderPorts.includes(selectedPort);
 const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
 const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
-  
+
 const portLabel: Record<string, string> = {
   "type-c": "Type-C",
   "lightning": "Lightning",
@@ -154,15 +158,21 @@ const selectedItem = {
   isSoldOut: isSoldOutOption,
   portType: portLabel[selectedPort],
 };
-  
+
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
-    toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
+    if (isPreorder) {
+      toast.success("Added to Cart — this is a Pre-order item");
+    } else {
+      toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
+    }
   };
-  
+
   const handleBuyNow = () => {
     add(selectedItem, selectedQty);
-    if (isSoldOutOption) {
+    if (isPreorder) {
+      toast.success("Added to Order (Pre-order). Proceeding to checkout...");
+    } else if (isSoldOutOption) {
       toast.success("Added to Order. Proceeding to checkout...");
     } else {
       toast.success("Added to bag. Proceeding to checkout...");
@@ -183,16 +193,16 @@ const selectedItem = {
                     <CarouselItem key={idx}>
                       <div className="flex items-center justify-center h-full">
                         {item.type === "image" ? (
-                          <img 
-                            src={item.src} 
-                            alt={featured.name} 
-                            loading="lazy" 
-                            className="w-[92%] h-[92%] object-contain" 
+                          <img
+                            src={item.src}
+                            alt={featured.name}
+                            loading="lazy"
+                            className="w-[92%] h-[92%] object-contain"
                           />
                         ) : (
-                          <video 
-                            src={item.src} 
-                            controls 
+                          <video
+                            src={item.src}
+                            controls
                             className="w-[92%] h-[92%] object-contain"
                             preload="metadata"
                           >
@@ -237,6 +247,11 @@ const selectedItem = {
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
               <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
               <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
+              {isPreorder && (
+                <span className="ml-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                  PRE-ORDER
+                </span>
+              )}
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Select Port Type</label>
@@ -246,10 +261,21 @@ const selectedItem = {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
-                  <SelectItem value="lightning">Lightning</SelectItem>
-                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
+                  <SelectItem value="lightning">Lightning (Pre-order)</SelectItem>
+                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning (Pre-order)</SelectItem>
                 </SelectContent>
               </Select>
+
+              {isPreorder && (
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                  <p>
+                    This port option is currently available for{" "}
+                    <span className="font-semibold">Pre-order</span> only. Your order
+                    will be shipped as soon as new stock arrives.
+                  </p>
+                </div>
+              )}
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
@@ -277,10 +303,10 @@ const selectedItem = {
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-  {"Buy Now"}
+  {isPreorder ? "Pre-order Now" : "Buy Now"}
 </button>
 <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-  {"Add to Cart" }
+  {isPreorder ? "Add Pre-order to Cart" : "Add to Cart"}
 </button>
             </div>
             <div className="mt-6 border-y border-border">
