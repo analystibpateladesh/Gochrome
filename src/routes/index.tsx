@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Headphones, Sparkles, Shield, Zap, Star, Plus, Minus, CheckCircle } from "lucide-react";
+import { ArrowRight, Headphones, Sparkles, Shield, Zap, Plus, Minus, CheckCircle, Star } from "lucide-react";
 import { useState } from "react";
 import hero from "@/assets/chrome-typec-hero.png";
 import single from "@/assets/chrome-typec-single.png";
-import jack from "@/assets/chrome-typec.png";
-import lifestyle from "@/assets/lifestyle-model.jpg";
-import a from "@/assets/chrome-ist.png";
+import jack from "@/assets/4.png";
+import lifestyle from "@/assets/micro.png";
+import a from "@/assets/2.png";
 import b from "@/assets/chrome-3rd.png";
 
 export const Route = createFileRoute("/")({
@@ -22,10 +22,10 @@ export const Route = createFileRoute("/")({
 });
 
 const reviews = [
-  { n: "Aarav S.", t: "Audiophile", q: "These look so fire. The chrome finish is crazy shiny and gives them a super premium vibe that stands out instantly.", r: 5 },
-  { n: "Priya K.", t: "Producer", q: "These sound so clean. The clarity is insane and every little detail comes through perfectly.", r: 5 },
-  { n: "Rohan M.", t: "Daily Listener", q: "These look like straight-up jewelry.", r: 5 },
-  { n: "Ananya J.", t: "Music Enthusiast", q: "Best earphones I've owned. The sound quality is exceptional and they're so comfortable all day long.", r: 5 },
+  { n: "Meera Nair", t: "Verified buyer · Bengaluru", q: "The chrome finish looks even better in person. I bought them for the design, but the sound has genuinely surprised me too.", r: 5 },
+  { n: "Kabir Shah", t: "Verified buyer · Mumbai", q: "The vocals are clear and the bass has enough punch without becoming muddy. I use them every day for calls and music.", r: 4 },
+  { n: "Sana Verma", t: "Verified buyer · Hyderabad", q: "They catch the light nicely and feel comfortable on my commute. The cable also feels more solid than I expected.", r: 5 },
+  { n: "Vikram Joshi", t: "Verified buyer · Pune", q: "I wanted something simple that works without charging. They sound clean and are easy to use every day.", r: 4 },
 ];
 
 const faqs = [
@@ -101,7 +101,7 @@ function Home() {
 
       {/* ENGINEERING / EXPLODED VIEW
       <section className="relative overflow-hidden bg-hero">
-        <div className="mx-auto max-w-7xl px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
+        <div className="mx-auto max-w-7xl px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Inside the chrome</p>
             <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mt-3">Engineered, layer by layer.</h2>
@@ -129,21 +129,21 @@ function Home() {
 
       {/* FEATURE HIGHLIGHT */}
       <section className="relative overflow-hidden bg-background/10">
-        <div className="mx-auto max-w-7xl px-6 py-32">
+        <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Built to move</p>
             <h2 className="mt-6 text-5xl md:text-6xl font-semibold tracking-tight">Built to move <span className="text-foreground/80">different.</span></h2>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground">Striking design. Powerful sound. Zero compromise.</p>
           </div>
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
+          <div className="mt-10 grid gap-10 md:grid-cols-3">
             {[
               { img: a, title: "Own the Look. Hear the Difference.", text: "Choose your Chrome Earphones and enjoy bold design with clear, immersive sound built for music, calls, and everyday listening." },
               { img: single, title: "Discover What Shines Inside.", text: "Open the box to reveal your Chrome Earphones, a polished mirror-chrome design that looks modern, feels premium, and is made to stand out." },
               { img: b, title: "Style Meets Sound.", text: "Chrome Earphones combine a premium mirror finish with clear, balanced audio, giving you an everyday listening experience that looks as good as it sounds." },
             ].map(item => (
-              <div key={item.title} className="group overflow-hidden rounded-[2rem] border border-border bg-white/70 p-6 shadow-xl shadow-slate-900/5 backdrop-blur-sm transition hover:-translate-y-1 dark:bg-black">
-                <div className="aspect-square overflow-hidden rounded-3xl bg-slate-100">
-                  <img src={item.img} alt={item.title} className="h-full w-full object-cover object-center" />
+              <div key={item.title} className="group transition">
+                <div className="aspect-square overflow-hidden">
+                  <img src={item.img} alt={item.title} className="h-full w-full object-contain object-center" />
                 </div>
                 <h3 className="mt-6 text-2xl font-semibold">{item.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.text}</p>
@@ -172,37 +172,37 @@ function Home() {
       </section>
 
       {/* LIFESTYLE */}
-      <section className="mx-auto max-w-7xl px-6 py-32 grid md:grid-cols-2 gap-12 items-center">
+      <section className="mx-auto max-w-7xl px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
         <div className="order-2 md:order-1">
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">For Everyday Listening</p>
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mt-3">Sound you can rely on.</h2>
           <p className="mt-5 text-muted-foreground text-lg leading-relaxed">Clear vocals, deep bass, and balanced audio designed for music, calls, and everything in between.</p>
           <Link to="/chrome" className="mt-8 inline-block px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">Shop GoChrome</Link>
         </div>
-        <div className="relative aspect-square rounded-3xl overflow-hidden order-1 md:order-2 shadow-elegant">
+        <div className="order-1 md:order-2">
           <img src={lifestyle} alt="Listener wearing GoChrome earphones" loading="lazy" className="w-full h-full object-cover" />
         </div>
       </section>
 
       {/* REVIEWS */}
-      <section className="bg-card border-y border-border">
-        <div className="mx-auto max-w-7xl px-6 py-24">
+      <section className="border-y border-border">
+        <div className="mx-auto max-w-3xl px-6 py-14">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Loved by listeners</p>
-            <h2 className="mt-3 text-4xl md:text-6xl font-semibold tracking-tight">4.9 out of 5</h2>
+            <h2 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">4.9 out of 5</h2>
             <div className="mt-3 flex items-center justify-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-foreground text-foreground" />)}
             </div>
             <p className="mt-3 text-sm text-muted-foreground">Based on 400 verified reviews</p>
           </div>
-          <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="mx-auto mt-8 max-w-2xl">
             {reviews.map(r => (
-              <figure key={r.n} className="card-soft card-flat-light p-6">
-                <div className="flex gap-0.5 mb-4">
+              <figure key={r.n} className="border-b border-border py-4 first:border-t">
+                <div className="flex gap-0.5">
                   {Array.from({ length: r.r }).map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-foreground text-foreground" />)}
                 </div>
-                <blockquote className="text-sm leading-relaxed">"{r.q}"</blockquote>
-                <figcaption className="mt-5 text-xs">
+                <blockquote className="mt-2 text-sm leading-6">"{r.q}"</blockquote>
+                <figcaption className="mt-2 text-xs">
                   <span className="font-medium">{r.n}</span>
                   <span className="text-muted-foreground"> · {r.t}</span>
                 </figcaption>
