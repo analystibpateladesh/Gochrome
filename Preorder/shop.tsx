@@ -83,7 +83,7 @@ function Shop() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
-  const [selectedPort, setSelectedPort] = useState("type-c");
+  const [selectedPort, setSelectedPort] = useState("lightning");
   const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
@@ -245,7 +245,6 @@ const selectedItem = {
                   <SelectValue placeholder="Select a port" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="type-c">USB type-C</SelectItem>
                   <SelectItem value="lightning">Lightning</SelectItem>
                   <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
                 </SelectContent>
