@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { featured } from "@/lib/products";
 import { PageHeader } from "@/components/PageHeader";
-import { AlertTriangle, CheckCircle, Plus, Star, X } from "lucide-react";
+import { CheckCircle, Plus, Star, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
 import single from "@/assets/1.png";
@@ -266,15 +266,18 @@ const selectedItem = {
                 </SelectContent>
               </Select>
 
-              {isPreorder && (
-                <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <p>
-                    <span className="font-semibold">Pre-order</span> only. Your order
-                    will be shipped as soon as new stock arrives.
-                  </p>
-                </div>
-              )}
+              {/*
+                Temporarily hidden. Uncomment this block later if you want to show the notice again.
+                {isPreorder && (
+                  <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                    <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p>
+                      <span className="font-semibold">Pre-order</span> only. Your order
+                      will be shipped as soon as new stock arrives.
+                    </p>
+                  </div>
+                )}
+              */}
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
