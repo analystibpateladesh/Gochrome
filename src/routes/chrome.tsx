@@ -144,6 +144,7 @@ const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavin
 
 const portLabel: Record<string, string> = {
   "type-c": "Type-C",
+  "jack": "3.5mm / Jack",
   "lightning": "Lightning",
   "type-c-lightning": "Type-C + Lightning",
 };
@@ -261,6 +262,7 @@ const selectedItem = {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
+                  <SelectItem value="jack">3.5mm / Jack</SelectItem>
                   <SelectItem value="lightning">Lightning (Pre-order)</SelectItem>
                   <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning (Pre-order)</SelectItem>
                 </SelectContent>

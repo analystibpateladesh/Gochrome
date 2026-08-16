@@ -18,15 +18,20 @@ type RazorpayOrder = {
 
 const addPortLabel: Record<string, string> = {
   "type-c": "Type-C",
+  "jack": "3.5mm / Jack",
   "lightning": "Lightning",
 };
 const addPortPricing: Record<string, number> = {
   "type-c": 799,
+  "jack": 799,
   "lightning": 899,
 };
 const checkoutBundlePricing: Record<string, number> = {
   "type-c+type-c": 1449,
+  "jack+jack": 1449,
+  "jack+type-c": 1449,
   "lightning+lightning": 1649,
+  "jack+lightning": 1549,
   "lightning+type-c": 1549,
   "type-c+lightning": 1549,
 };
@@ -74,6 +79,7 @@ function Checkout() {
 
     if (port.includes("lightning")) return "lightning";
     if (port.includes("type-c") || port.includes("type c")) return "type-c";
+    if (port.includes("jack") || port.includes("3.5")) return "jack";
     return "";
   };
 

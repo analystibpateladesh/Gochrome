@@ -2,11 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Headphones, Sparkles, Shield, Zap, Plus, Minus, CheckCircle, Star } from "lucide-react";
 import { useState } from "react";
 import hero from "@/assets/chrome-typec-hero.png";
-import single from "@/assets/chrome-typec-single.png";
+import single from "@/assets/12.png";
 import jack from "@/assets/4.png";
-import lifestyle from "@/assets/micro.png";
+import lifestyle from "@/assets/34.png";
 import a from "@/assets/2.png";
-import b from "@/assets/chrome-3rd.png";
+import b from "@/assets/1.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
