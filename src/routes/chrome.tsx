@@ -78,16 +78,12 @@ const portPricing: Record<string, { buyOne: number; buyTwo: number; buyOneMrp: n
   "jack": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3019 },
 };
 
-// Ports that are available for pre-order only (not in stock yet)
-const preorderPorts = ["lightning", "type-c-lightning"];
-
 function Shop() {
   const [selectedBundle, setSelectedBundle] = useState("buy1");
   const [selectedImage, setSelectedImage] = useState(0);
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
 
@@ -135,16 +131,14 @@ const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 const selectedQty = selectedBundle === "buy2" ? 2 : 1;
 const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const selectedUnitPrice = selectedTotal / selectedQty;
-const isSoldOutOption = outOfStockPorts.includes(selectedPort);
 const isMixedPair = selectedPort === "type-c-lightning";
-const isPreorder = preorderPorts.includes(selectedPort);
 const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
 const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
 
 const portLabel: Record<string, string> = {
   "type-c": "Type-C",
-  "jack": "3.5mm / Jack",
+  "jack": "3.5mm",
   "lightning": "Lightning",
   "type-c-lightning": "Type-C + Lightning",
 };
@@ -156,28 +150,17 @@ const selectedItem = {
     : `${featured.name} (${portLabel[selectedPort]})`,
   price: selectedUnitPrice,
   image: featured.image,
-  isSoldOut: isSoldOutOption,
   portType: portLabel[selectedPort],
 };
 
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
-    if (isPreorder) {
-      toast.success("Added to Cart — this is a Pre-order item");
-    } else {
-      toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
-    }
+    toast.success("Added to bag");
   };
 
   const handleBuyNow = () => {
     add(selectedItem, selectedQty);
-    if (isPreorder) {
-      toast.success("Added to Order (Pre-order). Proceeding to checkout...");
-    } else if (isSoldOutOption) {
-      toast.success("Added to Order. Proceeding to checkout...");
-    } else {
-      toast.success("Added to bag. Proceeding to checkout...");
-    }
+    toast.success("Added to bag. Proceeding to checkout...");
     nav({ to: "/checkout" });
   };
 
@@ -246,13 +229,8 @@ const selectedItem = {
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
-              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
-              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
-              {isPreorder && (
-                <span className="ml-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
-                  PRE-ORDER
-                </span>
-              )}
+              <span className="text-lg text-muted-foreground line-through">₹{displayedMrp.toLocaleString("en-IN")}</span>
+              <span className="text-sm font-semibold text-chrome">SAVE {displayedSavings}%</span>
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Select Port Type</label>
@@ -262,24 +240,11 @@ const selectedItem = {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
-                  <SelectItem value="jack">3.5mm / Jack</SelectItem>
-                  <SelectItem value="lightning">Lightning (Pre-order)</SelectItem>
-                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning (Pre-order)</SelectItem>
+                  <SelectItem value="jack">3.5mm</SelectItem>
+                  <SelectItem value="lightning">Lightning</SelectItem>
+                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
                 </SelectContent>
               </Select>
-
-              {/*
-                Temporarily hidden. Uncomment this block later if you want to show the notice again.
-                {isPreorder && (
-                  <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                    <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                    <p>
-                      <span className="font-semibold">Pre-order</span> only. Your order
-                      will be shipped as soon as new stock arrives.
-                    </p>
-                  </div>
-                )}
-              */}
             </div>
             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
@@ -289,8 +254,8 @@ const selectedItem = {
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
@@ -300,17 +265,17 @@ const selectedItem = {
                   <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
-  {isPreorder ? "Pre-order Now" : "Buy Now"}
+  {"Buy Now"}
 </button>
 <button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
-  {isPreorder ? "Add Pre-order to Cart" : "Add to Cart"}
+  {"Add to Cart"}
 </button>
             </div>
             <div className="mt-6 border-y border-border">

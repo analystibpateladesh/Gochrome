@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Headphones, Sparkles, Shield, Zap, Plus, Minus, CheckCircle, Star } from "lucide-react";
 import { useState } from "react";
 import hero from "@/assets/chrome-typec-hero.png";
-import single from "@/assets/12.png";
+import single from "@/assets/beech.jpg.jpeg";
 import jack from "@/assets/4.png";
 import lifestyle from "@/assets/34.png";
 import a from "@/assets/2.png";

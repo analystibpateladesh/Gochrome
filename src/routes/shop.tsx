@@ -70,7 +70,6 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
-  const [outOfStockPorts, setOutOfStockPorts] = useState<string[]>(["type-c", "lightning", "type-c-lightning", "jack"]);
   const { add } = useCart();
   const nav = useNavigate();
   
@@ -117,7 +116,6 @@ const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 const selectedQty = selectedBundle === "buy2" ? 2 : 1;
 const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const selectedUnitPrice = selectedTotal / selectedQty;
-const isSoldOutOption = outOfStockPorts.includes(selectedPort);
 const isMixedPair = selectedPort === "type-c-lightning";
 const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
@@ -137,22 +135,17 @@ const selectedItem = {
     : `${featured.name} (${portLabel[selectedPort]})`,
   price: selectedUnitPrice,
   image: featured.image,
-  isSoldOut: isSoldOutOption,
   portType: portLabel[selectedPort],
 };
   
   const handleAddToBag = () => {
     add(selectedItem, selectedQty);
-    toast.success(isSoldOutOption ? "Added to Cart, Please check your cart" : "Added to bag");
+    toast.success("Added to bag");
   };
   
   const handleBuyNow = () => {
     add(selectedItem, selectedQty);
-    if (isSoldOutOption) {
-      toast.success("Added to Order. Proceeding to checkout...");
-    } else {
-      toast.success("Added to bag. Proceeding to checkout...");
-    }
+    toast.success("Added to bag. Proceeding to checkout...");
     nav({ to: "/checkout" });
   };
 
@@ -221,8 +214,8 @@ const selectedItem = {
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
-              <span className={`text-lg text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{displayedMrp.toLocaleString("en-IN")}</span>
-              <span className={`text-sm font-semibold text-chrome ${outOfStockPorts.includes(selectedPort)}`}>SAVE {displayedSavings}%</span>
+              <span className="text-lg text-muted-foreground line-through">₹{displayedMrp.toLocaleString("en-IN")}</span>
+              <span className="text-sm font-semibold text-chrome">SAVE {displayedSavings}%</span>
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Select Port Type</label>
@@ -246,8 +239,8 @@ const selectedItem = {
                   <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
@@ -257,8 +250,8 @@ const selectedItem = {
                   <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-bold ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className={`text-xs text-muted-foreground line-through ${outOfStockPorts.includes(selectedPort)}`}>₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
                 </div>
               </label>
             </div>
