@@ -28,7 +28,7 @@ export const Route = createFileRoute("/shipping")({
         <p>Claims submitted without a valid unboxing video will not be accepted under any circumstances, including cases of damaged or defective items.</p>
         <p>The product must also be returned in its original condition with all included accessories and packaging.</p>
         <h3 className="text-lg font-semibold text-foreground">How to Request a Return or Refund</h3>
-        <p>To initiate a return or refund, email us at support@gochome.in with the following details:</p>
+        <p>To initiate a return or refund, email us at gochromeaudio@gmail.com with the following details:</p>
         <ul className="list-disc space-y-2 pl-6">
           <li>Your order number</li>
           <li>Reason for return</li>
