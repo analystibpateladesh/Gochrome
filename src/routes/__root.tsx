@@ -4,6 +4,7 @@ import {
   createRootRouteWithContext,
   useRouter,
 } from "@tanstack/react-router";
+import { Analytics } from "@vercel/analytics/react";
 
 import { ThemeProvider } from "@/lib/theme";
 import { CartProvider } from "@/lib/cart";
@@ -94,6 +95,7 @@ function RootComponent() {
         <CartProvider>
           <Layout />
           <ChatWidget />
+          <Analytics />
         </CartProvider>
       </ThemeProvider>
     </QueryClientProvider>
