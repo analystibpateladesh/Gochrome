@@ -5,7 +5,11 @@ export const Route = createFileRoute("/support")({
   head: () => ({ meta: [{ title: "Support — GoChrome" }] }),
   component: () => (
     <>
-      <PageHeader eyebrow="Support" title="We're here to help." sub="Find answers, manage your order, or talk to a human." />
+      <PageHeader
+        eyebrow="Support"
+        title="We're here to help."
+        sub="Find answers, manage your order, or talk to a human."
+      />
       <section className="mx-auto max-w-5xl px-6 pb-24 grid sm:grid-cols-2 gap-4">
         {[
           ["/contact", "Contact us", "Get a response within 24 hours."],

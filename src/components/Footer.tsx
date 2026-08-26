@@ -1,29 +1,60 @@
 import { Link } from "@tanstack/react-router";
 
 const cols = [
-  { title: "Shop", links: [["/chrome","Chrome Earphones"],["/chrome","All Products"],["/chrome","Accessories"],["/cart","Cart"]] },
-  { title: "Company", links: [["/about","About"],["/careers","Careers"],["/privacy","Privacy Policy"]] },
-  { title: "Support", links: [["/contact","Contact Us"],["/shipping","Shipping"],["/track","Track Order"]] },
+  {
+    title: "Shop",
+    links: [
+      ["/chrome", "Chrome Earphones"],
+      ["/chrome", "All Products"],
+      ["/chrome", "Accessories"],
+      ["/cart", "Cart"],
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      ["/about", "About"],
+      ["/careers", "Careers"],
+      ["/privacy", "Privacy Policy"],
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      ["/contact", "Contact Us"],
+      ["/shipping", "Shipping"],
+      ["/track", "Track Order"],
+    ],
+  },
 ] as const;
 
 export function Footer() {
   return (
     <footer className="border-t border-border mt-24">
       <div className="mx-auto max-w-7xl px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-10">
-        {cols.map(col => (
+        {cols.map((col) => (
           <div key={col.title}>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-foreground mb-4">
+              {col.title}
+            </h4>
             <ul className="space-y-2.5">
               {col.links.map(([to, label]) => (
                 <li key={to}>
-                  <Link to={to} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{label}</Link>
+                  <Link
+                    to={to}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
         ))}
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-foreground mb-4">Follow Our Socials</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-widest text-foreground mb-4">
+            Follow Our Socials
+          </h4>
           <div className="flex items-center gap-3">
             <a
               href="https://www.instagram.com/gochrome.in/"

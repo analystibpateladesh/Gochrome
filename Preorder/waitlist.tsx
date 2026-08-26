@@ -64,7 +64,6 @@ function Waitlist() {
     <section className="mx-auto max-w-lg px-6 py-20">
       <h1 className="text-4xl font-semibold tracking-tight mb-8">Join Waitlist</h1>
       <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="space-y-8">
-
         <Section title="Contact">
           <Field name="email" label="Email" type="email" required />
           <Field name="phone" label="Phone" type="tel" required />
@@ -79,13 +78,13 @@ function Waitlist() {
 
         <div
           className="flex items-start gap-3 p-4 rounded-xl border border-border bg-muted/40 cursor-pointer"
-          onClick={() => setNotify(n => !n)}
+          onClick={() => setNotify((n) => !n)}
         >
           <input
             type="checkbox"
             id="notify"
             checked={notify}
-            onChange={e => setNotify(e.target.checked)}
+            onChange={(e) => setNotify(e.target.checked)}
             className="mt-0.5 h-4 w-4 accent-primary cursor-pointer"
           />
           <label htmlFor="notify" className="text-sm cursor-pointer select-none">
@@ -101,7 +100,6 @@ function Waitlist() {
         >
           {loading ? "Processing..." : "Join Waitlist (No Payment)"}
         </button>
-
       </form>
     </section>
   );
@@ -110,7 +108,9 @@ function Waitlist() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">{title}</h2>
+      <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+        {title}
+      </h2>
       {children}
     </div>
   );

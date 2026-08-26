@@ -2,20 +2,39 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { products } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export const Route = createFileRoute("/products/$id")({
   head: ({ params }) => {
-    const p = products.find(x => x.id === params.id);
-    return { meta: [{ title: `${p?.name ?? "Product"} — GoChrome` }, { name: "description", content: p?.tagline ?? "" }, { property: "og:image", content: p?.image ?? "" }] };
+    const p = products.find((x) => x.id === params.id);
+    return {
+      meta: [
+        { title: `${p?.name ?? "Product"} — GoChrome` },
+        { name: "description", content: p?.tagline ?? "" },
+        { property: "og:image", content: p?.image ?? "" },
+      ],
+    };
   },
   component: ProductPage,
-  notFoundComponent: () => <div className="p-20 text-center">Product not found. <Link to="/chrome" className="underline">Shop</Link></div>,
+  notFoundComponent: () => (
+    <div className="p-20 text-center">
+      Product not found.{" "}
+      <Link to="/chrome" className="underline">
+        Shop
+      </Link>
+    </div>
+  ),
 });
 
 function ProductPage() {
   const { id } = Route.useParams();
-  const product = products.find(p => p.id === id);
+  const product = products.find((p) => p.id === id);
   const { add } = useCart();
   const nav = useNavigate();
   if (!product) return <div className="p-20 text-center">Not found.</div>;
@@ -34,7 +53,11 @@ function ProductPage() {
             {product.images.map((src, index) => (
               <CarouselItem key={index}>
                 <div className="relative aspect-square flex items-center justify-center overflow-hidden rounded-3xl bg-background p-6 shadow-elegant">
-                  <img src={src} alt={`${product.name} view ${index + 1}`} className="w-full h-full object-contain" />
+                  <img
+                    src={src}
+                    alt={`${product.name} view ${index + 1}`}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </CarouselItem>
             ))}
@@ -44,21 +67,52 @@ function ProductPage() {
         </Carousel>
       </div>
       <div>
-        {product.badge && <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{product.badge}</p>}
+        {product.badge && (
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            {product.badge}
+          </p>
+        )}
         <h1 className="mt-3 text-5xl font-semibold tracking-tight">{product.name}</h1>
         <p className="mt-3 text-lg text-muted-foreground">{product.tagline}</p>
         <p className="mt-8 text-3xl font-medium">₹{product.price.toLocaleString("en-IN")}</p>
         <p className="text-sm text-muted-foreground mt-1">Inclusive of all taxes · Free shipping</p>
         <div className="mt-8 flex gap-3 flex-wrap">
-          <button onClick={() => buy(true)} className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90">Buy Now</button>
-          <button onClick={() => buy(false)} className="px-7 py-3.5 rounded-full border border-border text-sm font-medium hover:bg-accent">Add to Bag</button>
+          <button
+            onClick={() => buy(true)}
+            className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          >
+            Buy Now
+          </button>
+          <button
+            onClick={() => buy(false)}
+            className="px-7 py-3.5 rounded-full border border-border text-sm font-medium hover:bg-accent"
+          >
+            Add to Bag
+          </button>
         </div>
         <div className="mt-10 grid grid-cols-2 gap-4 text-sm">
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Speaker</p><p className="mt-1">Copper ring speaker</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Driver Size</p><p className="mt-1">14.2mm diameter copper ring speaker</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Frequency Response</p><p className="mt-1">20–20kHz</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Sensitivity</p><p className="mt-1">103±3dB</p></div>
-          <div className="border-t border-border pt-3"><p className="text-muted-foreground text-xs uppercase tracking-widest">Impedance</p><p className="mt-1">32±15% Ω</p></div>
+          <div className="border-t border-border pt-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest">Speaker</p>
+            <p className="mt-1">Copper ring speaker</p>
+          </div>
+          <div className="border-t border-border pt-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest">Driver Size</p>
+            <p className="mt-1">14.2mm diameter copper ring speaker</p>
+          </div>
+          <div className="border-t border-border pt-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest">
+              Frequency Response
+            </p>
+            <p className="mt-1">20–20kHz</p>
+          </div>
+          <div className="border-t border-border pt-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest">Sensitivity</p>
+            <p className="mt-1">103±3dB</p>
+          </div>
+          <div className="border-t border-border pt-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest">Impedance</p>
+            <p className="mt-1">32±15% Ω</p>
+          </div>
         </div>
       </div>
     </section>

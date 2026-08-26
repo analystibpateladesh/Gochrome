@@ -38,14 +38,45 @@ function Contact() {
 
   return (
     <>
-      <PageHeader eyebrow="Contact" title="Talk to us." sub="support@gochome.in · gochromeaudio@gmail.com · +91 9140579643" />
+      <PageHeader
+        eyebrow="Contact"
+        title="Talk to us."
+        sub="support@gochome.in · gochromeaudio@gmail.com · +91 9140579643"
+      />
       <section className="mx-auto max-w-2xl px-6 pb-24">
         <form onSubmit={submit} className="space-y-4">
-          <input name="name" required type="text" placeholder="Name" className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-          <input name="email" required type="email" placeholder="Email" className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-          <input name="subject" required type="text" placeholder="Subject" className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-          <textarea name="message" required placeholder="Message" rows={6} className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-          <button disabled={loading} className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
+          <input
+            name="name"
+            required
+            type="text"
+            placeholder="Name"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <input
+            name="email"
+            required
+            type="email"
+            placeholder="Email"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <input
+            name="subject"
+            required
+            type="text"
+            placeholder="Subject"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <textarea
+            name="message"
+            required
+            placeholder="Message"
+            rows={6}
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <button
+            disabled={loading}
+            className="px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
+          >
             {loading ? "Sending..." : "Send message"}
           </button>
         </form>
