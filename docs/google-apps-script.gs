@@ -117,11 +117,7 @@ function getSheet(spreadsheet, name, headers) {
 function logError(error, e) {
   try {
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = getSheet(spreadsheet, ERROR_SHEET_NAME, [
-      "Time",
-      "Error",
-      "Payload",
-    ]);
+    const sheet = getSheet(spreadsheet, ERROR_SHEET_NAME, ["Time", "Error", "Payload"]);
 
     sheet.appendRow([
       new Date().toISOString(),
@@ -132,7 +128,7 @@ function logError(error, e) {
 }
 
 function jsonResponse(payload) {
-  return ContentService
-    .createTextOutput(JSON.stringify(payload))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
 }

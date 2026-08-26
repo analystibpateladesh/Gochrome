@@ -1,9 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-} from "@tanstack/react-router";
+import { Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
 import { Analytics } from "@vercel/analytics/react";
 
 import { ThemeProvider } from "@/lib/theme";
@@ -74,7 +70,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "GoChrome — Precision Sound. Engineered Chrome." },
-      { name: "description", content: "GoChrome crafts reference-grade Chrome Earphones with precision-engineered hybrid drivers and a polished chrome aesthetic." },
+      {
+        name: "description",
+        content:
+          "GoChrome crafts reference-grade Chrome Earphones with precision-engineered hybrid drivers and a polished chrome aesthetic.",
+      },
       { name: "author", content: "GoChrome" },
       { property: "og:title", content: "GoChrome — Precision Sound" },
       { property: "og:description", content: "Reference-grade Chrome Earphones." },

@@ -103,13 +103,13 @@ export function ChatWidget() {
 
     try {
       const res = await fetch(
-        `${CHAT_BACKEND_URL}?action=lookup&query=${encodeURIComponent(query)}`
+        `${CHAT_BACKEND_URL}?action=lookup&query=${encodeURIComponent(query)}`,
       );
       const data = await res.json();
 
       if (!data.found || !data.orders?.length) {
         pushBot(
-          "I couldn't find any orders with that phone number or email. Please double-check and try again, or make sure you're using the same one from checkout."
+          "I couldn't find any orders with that phone number or email. Please double-check and try again, or make sure you're using the same one from checkout.",
         );
         setScreen("identify");
         return;
@@ -120,12 +120,12 @@ export function ChatWidget() {
       pushBot(
         `Found it! Hi ${name}, you have ${data.orders.length} order${
           data.orders.length > 1 ? "s" : ""
-        } with us. What would you like to know?`
+        } with us. What would you like to know?`,
       );
       setScreen("menu");
     } catch (e) {
       pushBot(
-        "Sorry, I'm having trouble reaching our order system right now. Please try again in a bit, or reach out to us directly."
+        "Sorry, I'm having trouble reaching our order system right now. Please try again in a bit, or reach out to us directly.",
       );
       setScreen("identify");
     }
@@ -216,11 +216,7 @@ export function ChatWidget() {
         <div style={styles.panel}>
           <div style={styles.header}>
             <div style={styles.headerTitle}>GoChrome Support</div>
-            <button
-              aria-label="Close chat"
-              onClick={() => setOpen(false)}
-              style={styles.closeBtn}
-            >
+            <button aria-label="Close chat" onClick={() => setOpen(false)} style={styles.closeBtn}>
               ✕
             </button>
           </div>
@@ -255,9 +251,7 @@ export function ChatWidget() {
 
             {screen === "loading" && (
               <div style={styles.bubbleRow}>
-                <div style={{ ...styles.bubble, ...styles.bubbleBot }}>
-                  Looking that up…
-                </div>
+                <div style={{ ...styles.bubble, ...styles.bubbleBot }}>Looking that up…</div>
               </div>
             )}
 
@@ -270,11 +264,7 @@ export function ChatWidget() {
                   "Something else / FAQ",
                   "Start over",
                 ].map((opt) => (
-                  <button
-                    key={opt}
-                    style={styles.optionBtn}
-                    onClick={() => handleMenuSelect(opt)}
-                  >
+                  <button key={opt} style={styles.optionBtn} onClick={() => handleMenuSelect(opt)}>
                     {opt}
                   </button>
                 ))}
@@ -295,10 +285,7 @@ export function ChatWidget() {
                     {f.label}
                   </button>
                 ))}
-                <button
-                  style={styles.optionBtn}
-                  onClick={() => setScreen("menu")}
-                >
+                <button style={styles.optionBtn} onClick={() => setScreen("menu")}>
                   ← Back
                 </button>
               </div>
@@ -381,9 +368,7 @@ export function ChatWidget() {
         ) : (
           <>
             <AskIcon />
-            {pulseExpanded && (
-              <span className="gc-fab-label">Ask GoChrome Assistant</span>
-            )}
+            {pulseExpanded && <span className="gc-fab-label">Ask GoChrome Assistant</span>}
           </>
         )}
       </button>

@@ -59,7 +59,12 @@
   --ring: oklch(0.55 0.02 260);
   --chrome: oklch(0.78 0.01 260);
   --chrome-glow: oklch(0.92 0.01 260);
-  --gradient-chrome: linear-gradient(135deg, oklch(0.95 0.005 260) 0%, oklch(0.65 0.015 260) 50%, oklch(0.88 0.01 260) 100%);
+  --gradient-chrome: linear-gradient(
+    135deg,
+    oklch(0.95 0.005 260) 0%,
+    oklch(0.65 0.015 260) 50%,
+    oklch(0.88 0.01 260) 100%
+  );
   --gradient-hero: radial-gradient(ellipse at top, oklch(0.98 0 0) 0%, oklch(0.94 0.005 260) 100%);
   --shadow-elegant: 0 30px 80px -20px oklch(0.13 0.01 260 / 0.18);
   --shadow-glow: 0 0 80px oklch(0.85 0.02 260 / 0.5);
@@ -87,23 +92,42 @@
   --ring: oklch(0.7 0.02 260);
   --chrome: oklch(0.85 0.01 260);
   --chrome-glow: oklch(0.95 0.005 260);
-  --gradient-chrome: linear-gradient(135deg, oklch(0.95 0.005 260) 0%, oklch(0.55 0.015 260) 50%, oklch(0.88 0.01 260) 100%);
-  --gradient-hero: radial-gradient(ellipse at top, oklch(0.14 0.01 260) 0%, oklch(0.06 0.005 260) 100%);
+  --gradient-chrome: linear-gradient(
+    135deg,
+    oklch(0.95 0.005 260) 0%,
+    oklch(0.55 0.015 260) 50%,
+    oklch(0.88 0.01 260) 100%
+  );
+  --gradient-hero: radial-gradient(
+    ellipse at top,
+    oklch(0.14 0.01 260) 0%,
+    oklch(0.06 0.005 260) 100%
+  );
   --shadow-elegant: 0 30px 80px -20px oklch(0 0 0 / 0.6);
   --shadow-glow: 0 0 100px oklch(0.85 0.02 260 / 0.25);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: "cv02","cv03","cv04","cv11";
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
 }
 
 @layer utilities {
@@ -113,29 +137,54 @@
     background-clip: text;
     color: transparent;
   }
-  .bg-hero { background: var(--gradient-hero); }
-  .shadow-elegant { box-shadow: var(--shadow-elegant); }
-  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .bg-hero {
+    background: var(--gradient-hero);
+  }
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
   .glass {
     backdrop-filter: blur(20px) saturate(180%);
     background-color: color-mix(in oklab, var(--background) 70%, transparent);
   }
   .card-soft {
-    background: linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--muted) 60%, transparent));
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--card) 92%, transparent),
+      color-mix(in oklab, var(--muted) 60%, transparent)
+    );
     border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
-    box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent) inset, 0 20px 40px -24px color-mix(in oklab, var(--foreground) 18%, transparent);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent) inset,
+      0 20px 40px -24px color-mix(in oklab, var(--foreground) 18%, transparent);
     border-radius: 1.25rem;
-    transition: transform .3s ease, box-shadow .3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
-  .card-soft:hover { transform: translateY(-2px); box-shadow: 0 30px 60px -28px color-mix(in oklab, var(--foreground) 25%, transparent); }
+  .card-soft:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 60px -28px color-mix(in oklab, var(--foreground) 25%, transparent);
+  }
   :root:not(.dark) .card-flat-light,
   :root:not(.dark) .card-flat-light:hover {
     box-shadow: none;
   }
   .product-stage {
     background:
-      radial-gradient(60% 60% at 50% 40%, color-mix(in oklab, var(--chrome) 22%, transparent) 0%, transparent 70%),
-      radial-gradient(40% 40% at 50% 80%, color-mix(in oklab, var(--foreground) 8%, transparent) 0%, transparent 70%);
+      radial-gradient(
+        60% 60% at 50% 40%,
+        color-mix(in oklab, var(--chrome) 22%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        40% 40% at 50% 80%,
+        color-mix(in oklab, var(--foreground) 8%, transparent) 0%,
+        transparent 70%
+      );
   }
   .glow-stage {
     position: relative;
@@ -145,13 +194,24 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(50% 45% at 50% 50%, color-mix(in oklab, var(--chrome) 35%, transparent) 0%, transparent 70%),
-      radial-gradient(35% 30% at 50% 75%, color-mix(in oklab, var(--foreground) 14%, transparent) 0%, transparent 70%);
+      radial-gradient(
+        50% 45% at 50% 50%,
+        color-mix(in oklab, var(--chrome) 35%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        35% 30% at 50% 75%,
+        color-mix(in oklab, var(--foreground) 14%, transparent) 0%,
+        transparent 70%
+      );
     filter: blur(20px);
     z-index: 0;
     pointer-events: none;
   }
-  .glow-stage > * { position: relative; z-index: 1; }
+  .glow-stage > * {
+    position: relative;
+    z-index: 1;
+  }
   .ground-shadow {
     position: absolute;
     left: 50%;
@@ -159,22 +219,39 @@
     width: 60%;
     height: 8%;
     transform: translateX(-50%);
-    background: radial-gradient(ellipse at center, color-mix(in oklab, var(--foreground) 35%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in oklab, var(--foreground) 35%, transparent) 0%,
+      transparent 70%
+    );
     filter: blur(14px);
     z-index: 0;
     pointer-events: none;
   }
-  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
   @keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
   }
   .animate-fade-up {
-    animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 @keyframes port-slide-up {

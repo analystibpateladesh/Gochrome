@@ -60,7 +60,9 @@ function Track() {
       const json: OrderData = await res.json();
 
       if (!json.found) {
-        setError("Double-check your Order ID and try again — it should look like GC-PREORDER-XXXXXXXXXX.");
+        setError(
+          "Double-check your Order ID and try again — it should look like GC-PREORDER-XXXXXXXXXX.",
+        );
         setData(null);
         return;
       }
@@ -84,7 +86,10 @@ function Track() {
         sub="Enter your Order ID to see where your GoChrome earphones are right now."
       />
       <section className="mx-auto max-w-2xl px-6 pb-24">
-        <form onSubmit={trackOrder} className="flex gap-2 rounded-xl border border-border bg-background p-2">
+        <form
+          onSubmit={trackOrder}
+          className="flex gap-2 rounded-xl border border-border bg-background p-2"
+        >
           <input
             name="orderId"
             type="text"
@@ -112,7 +117,9 @@ function Track() {
               !
             </div>
             <div>
-              <div className="mb-0.5 text-sm font-semibold text-foreground">We couldn't find that order</div>
+              <div className="mb-0.5 text-sm font-semibold text-foreground">
+                We couldn't find that order
+              </div>
               <div className="text-sm leading-relaxed text-muted-foreground">{error}</div>
             </div>
           </div>
@@ -123,7 +130,9 @@ function Track() {
             <div className="mt-7 rounded-xl border border-border bg-background p-6">
               <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="mb-1 font-display text-lg font-bold text-foreground">{data.name || "—"}</p>
+                  <p className="mb-1 font-display text-lg font-bold text-foreground">
+                    {data.name || "—"}
+                  </p>
                   <p className="text-sm font-medium text-muted-foreground">
                     Order placed {formatDate(data.submittedAt)}
                   </p>
@@ -226,7 +235,10 @@ function Track() {
 
             <p className="mt-5 text-center text-sm text-muted-foreground">
               Any issue?{" "}
-              <a href="mailto:gochromeaudio@gmail.com" className="font-bold text-amber-600 underline">
+              <a
+                href="mailto:gochromeaudio@gmail.com"
+                className="font-bold text-amber-600 underline"
+              >
                 Contact our team
               </a>
             </p>

@@ -73,9 +73,16 @@ function Receipt() {
     return (
       <section className="mx-auto max-w-3xl px-6 py-24 text-center">
         <h1 className="text-2xl font-semibold">No recent order found</h1>
-        <p className="mt-4 text-sm text-muted-foreground">If you just paid, please return to the checkout page.</p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          If you just paid, please return to the checkout page.
+        </p>
         <div className="mt-6">
-          <button onClick={() => nav({ to: "/" })} className="px-4 py-2 rounded bg-primary text-primary-foreground">Go home</button>
+          <button
+            onClick={() => nav({ to: "/" })}
+            className="px-4 py-2 rounded bg-primary text-primary-foreground"
+          >
+            Go home
+          </button>
         </div>
       </section>
     );
@@ -89,8 +96,21 @@ function Receipt() {
           <div className="text-sm text-muted-foreground">Order receipt</div>
         </div>
         <div className="space-x-2">
-          <button onClick={() => { sessionStorage.removeItem("latestOrder"); nav({ to: "/" }); }} className="px-4 py-2 rounded border">Done</button>
-          <button onClick={printReceipt} className="px-4 py-2 rounded bg-primary text-primary-foreground">Print / Download Receipt</button>
+          <button
+            onClick={() => {
+              sessionStorage.removeItem("latestOrder");
+              nav({ to: "/" });
+            }}
+            className="px-4 py-2 rounded border"
+          >
+            Done
+          </button>
+          <button
+            onClick={printReceipt}
+            className="px-4 py-2 rounded bg-primary text-primary-foreground"
+          >
+            Print / Download Receipt
+          </button>
         </div>
       </div>
 
@@ -106,9 +126,15 @@ function Receipt() {
         <div className="flex justify-between">
           <div>
             <div className="font-medium">Order ID: {order.orderId}</div>
-            <div className="text-sm text-muted-foreground">Razorpay Order ID: {order.razorpayOrderId || "-"}</div>
-            <div className="text-sm text-muted-foreground">Payment ID: {order.paymentId || "-"}</div>
-            <div className="text-sm text-muted-foreground">{new Date(order.date).toLocaleString()}</div>
+            <div className="text-sm text-muted-foreground">
+              Razorpay Order ID: {order.razorpayOrderId || "-"}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Payment ID: {order.paymentId || "-"}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {new Date(order.date).toLocaleString()}
+            </div>
           </div>
           <div className="text-right">
             <div className="font-medium">Gochrome Pvt. Ltd.</div>
@@ -118,13 +144,22 @@ function Receipt() {
 
         <div className="mt-6">
           <strong>Billing / Shipping</strong>
-          <div className="text-sm">{order.customerName} · {order.email} · {order.phone}</div>
-          <div className="text-sm">{order.streetAddress} {order.city} {order.state} {order.pinCode}</div>
+          <div className="text-sm">
+            {order.customerName} · {order.email} · {order.phone}
+          </div>
+          <div className="text-sm">
+            {order.streetAddress} {order.city} {order.state} {order.pinCode}
+          </div>
         </div>
 
         <table className="w-full mt-4 text-sm">
           <thead>
-            <tr className="text-left"><th>Item</th><th>Qty</th><th>Price</th><th>Line total</th></tr>
+            <tr className="text-left">
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Line total</th>
+            </tr>
           </thead>
           <tbody>
             {order.items.map((it: OrderItem) => (
@@ -138,7 +173,9 @@ function Receipt() {
           </tbody>
         </table>
 
-        <div className="mt-4 text-right font-medium">Total: ₹{Number(order.total).toLocaleString("en-IN")}</div>
+        <div className="mt-4 text-right font-medium">
+          Total: ₹{Number(order.total).toLocaleString("en-IN")}
+        </div>
 
         <div className="mt-6 flex justify-center">
           <div className="text-center">

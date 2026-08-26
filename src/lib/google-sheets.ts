@@ -15,29 +15,33 @@ function getSheetUrl(payload: SheetPayload): string {
   switch (payload.type) {
     case "contact":
       if (!CONTACT_SHEETS_WEB_APP_URL)
-        throw new Error("Contact Google Sheets URL is not configured. Add VITE_CONTACT_SHEETS_WEB_APP_URL to Vercel.");
+        throw new Error(
+          "Contact Google Sheets URL is not configured. Add VITE_CONTACT_SHEETS_WEB_APP_URL to Vercel.",
+        );
       return CONTACT_SHEETS_WEB_APP_URL;
 
     case "preorder":
-  if (!PREORDER_SHEETS_WEB_APP_URL) {
-    console.warn("Preorder URL not set, falling back to orders sheet.");
-    if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
-    return ORDERS_SHEETS_WEB_APP_URL;
-  }
-  return PREORDER_SHEETS_WEB_APP_URL;
+      if (!PREORDER_SHEETS_WEB_APP_URL) {
+        console.warn("Preorder URL not set, falling back to orders sheet.");
+        if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
+        return ORDERS_SHEETS_WEB_APP_URL;
+      }
+      return PREORDER_SHEETS_WEB_APP_URL;
 
-case "waitlist":
-  if (!WAITLIST_SHEETS_WEB_APP_URL) {
-    console.warn("Waitlist URL not set, falling back to orders sheet.");
-    if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
-    return ORDERS_SHEETS_WEB_APP_URL;
-  }
-  return WAITLIST_SHEETS_WEB_APP_URL;
+    case "waitlist":
+      if (!WAITLIST_SHEETS_WEB_APP_URL) {
+        console.warn("Waitlist URL not set, falling back to orders sheet.");
+        if (!ORDERS_SHEETS_WEB_APP_URL) throw new Error("Orders sheet URL also not configured.");
+        return ORDERS_SHEETS_WEB_APP_URL;
+      }
+      return WAITLIST_SHEETS_WEB_APP_URL;
 
     case "order":
     default:
       if (!ORDERS_SHEETS_WEB_APP_URL)
-        throw new Error("Orders Google Sheets URL is not configured. Add VITE_ORDERS_SHEETS_WEB_APP_URL to Vercel.");
+        throw new Error(
+          "Orders Google Sheets URL is not configured. Add VITE_ORDERS_SHEETS_WEB_APP_URL to Vercel.",
+        );
       return ORDERS_SHEETS_WEB_APP_URL;
   }
 }
