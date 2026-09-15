@@ -525,6 +525,8 @@ function Checkout() {
         }
       };
 
+      let paymentFailed = false;
+
       const checkout = new window.Razorpay!({
         key: RAZORPAY_KEY_ID!,
         amount: razorpayOrder.amount,
@@ -546,12 +548,21 @@ function Checkout() {
         },
         handler: paymentHandler,
         modal: {
-          ondismiss: () => setLoading(false),
+          ondismiss: () => {
+            setLoading(false);
+
+            // Keep Razorpay visible after its failure message. Navigate only
+            // after the customer manually closes the Razorpay checkout.
+            if (paymentFailed) {
+              window.setTimeout(() => nav({ to: "/payment-failed" }), 150);
+            }
+          },
         },
       });
 
       checkout.on("payment.failed", (failure: RazorpayPaymentFailedResponse) => {
         const error = failure.error;
+        paymentFailed = true;
 
         try {
           sessionStorage.setItem("paymentFailure", JSON.stringify({
@@ -565,7 +576,6 @@ function Checkout() {
         }
 
         setLoading(false);
-        nav({ to: "/payment-failed" });
       });
 
       checkout.open();
