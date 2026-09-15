@@ -22,6 +22,7 @@ import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as ReceiptRouteImport } from './routes/receipt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PressRouteImport } from './routes/press'
+import { Route as PaymentFailedRouteImport } from './routes/payment-failed'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChromeRouteImport } from './routes/chrome'
@@ -98,6 +99,11 @@ const PressRoute = PressRouteImport.update({
   path: '/press',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentFailedRoute = PaymentFailedRouteImport.update({
+  id: '/payment-failed',
+  path: '/payment-failed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/chrome': typeof ChromeRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
+  '/payment-failed': typeof PaymentFailedRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/chrome': typeof ChromeRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
+  '/payment-failed': typeof PaymentFailedRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/chrome': typeof ChromeRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
+  '/payment-failed': typeof PaymentFailedRoute
   '/press': typeof PressRoute
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/chrome'
     | '/contact'
     | '/cookies'
+    | '/payment-failed'
     | '/press'
     | '/privacy'
     | '/receipt'
@@ -262,6 +272,7 @@ export interface FileRouteTypes {
     | '/chrome'
     | '/contact'
     | '/cookies'
+    | '/payment-failed'
     | '/press'
     | '/privacy'
     | '/receipt'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/chrome'
     | '/contact'
     | '/cookies'
+    | '/payment-failed'
     | '/press'
     | '/privacy'
     | '/receipt'
@@ -313,6 +325,7 @@ export interface RootRouteChildren {
   ChromeRoute: typeof ChromeRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
+  PaymentFailedRoute: typeof PaymentFailedRoute
   PressRoute: typeof PressRoute
   PrivacyRoute: typeof PrivacyRoute
   ReceiptRoute: typeof ReceiptRoute
@@ -422,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PressRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment-failed': {
+      id: '/payment-failed'
+      path: '/payment-failed'
+      fullPath: '/payment-failed'
+      preLoaderRoute: typeof PaymentFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cookies': {
       id: '/cookies'
       path: '/cookies'
@@ -505,6 +525,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChromeRoute: ChromeRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
+  PaymentFailedRoute: PaymentFailedRoute,
   PressRoute: PressRoute,
   PrivacyRoute: PrivacyRoute,
   ReceiptRoute: ReceiptRoute,

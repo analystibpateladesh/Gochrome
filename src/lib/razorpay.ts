@@ -31,9 +31,28 @@ type RazorpayOptions = {
   };
 };
 
+type RazorpayPaymentFailedResponse = {
+  error?: {
+    code?: string;
+    description?: string;
+    reason?: string;
+    source?: string;
+    step?: string;
+    metadata?: {
+      order_id?: string;
+      payment_id?: string;
+    };
+  };
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on: (event: "payment.failed", handler: (response: RazorpayPaymentFailedResponse) => void) => void;
+};
+
 declare global {
   interface Window {
-    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
   }
 }
 
@@ -82,4 +101,4 @@ export function loadRazorpayCheckout() {
   return checkoutScriptPromise;
 }
 
-export type { RazorpayResponse };
+export type { RazorpayPaymentFailedResponse, RazorpayResponse };

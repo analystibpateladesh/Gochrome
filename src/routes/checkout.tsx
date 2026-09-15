@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCart, type CartItem } from "@/lib/cart";
 import { saveToGoogleSheets } from "@/lib/google-sheets";
-import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayResponse } from "@/lib/razorpay";
+import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayPaymentFailedResponse, type RazorpayResponse } from "@/lib/razorpay";
 import { useState, useRef, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { toast } from "sonner";
 import { Lock, MapPin, Minus, Plus, Search, X } from "lucide-react";
@@ -550,6 +550,24 @@ function Checkout() {
         },
       });
 
+      checkout.on("payment.failed", (failure: RazorpayPaymentFailedResponse) => {
+        const error = failure.error;
+
+        try {
+          sessionStorage.setItem("paymentFailure", JSON.stringify({
+            orderId,
+            razorpayOrderId: error?.metadata?.order_id || razorpayOrder.id,
+            paymentId: error?.metadata?.payment_id || "",
+            reason: error?.description || "Your payment could not be completed.",
+          }));
+        } catch (storageError) {
+          console.warn("Unable to persist payment failure details", storageError);
+        }
+
+        setLoading(false);
+        nav({ to: "/payment-failed" });
+      });
+
       checkout.open();
     } catch (err) {
       setLoading(false);
@@ -739,6 +757,7 @@ function Checkout() {
                 >
                   <option value="type-c">USB Type-C (₹799)</option>
                   <option value="lightning">Lightning (₹899)</option>
+                  <option value="jack">3.5mm / Jack (₹799)</option>
                 </select>
                 <button
                   type="button"
