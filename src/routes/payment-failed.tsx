@@ -69,7 +69,7 @@ function PaymentFailed() {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <a href={`https://wa.me/${supportPhone}?text=${whatsappMessage}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700"><MessageCircle className="h-4 w-4" />WhatsApp</a>
-            <a href={`mailto:${supportEmail}?subject=${emailSubject}&body=${emailBody}`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Mail className="h-4 w-4" />Email us</a>
+            <a href={`https://mail.google.com/mail/u/0/?to=${supportEmail}&subject=${emailSubject}&body=${emailBody}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Mail className="h-4 w-4" />Email us</a>
             <a href="https://www.instagram.com/gochrome.in/" target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Instagram className="h-4 w-4" />Instagram</a>
           </div>
 
