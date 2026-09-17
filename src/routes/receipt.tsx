@@ -156,7 +156,7 @@ function Receipt() {
           <div className="text-sm text-muted-foreground text-right">
             <div>GoChrome Pvt. Ltd.</div>
             <div>Delhi, India</div>
-            <div>gochrome.in | support@gochrome.in | +91 9140579643</div>
+            <div>gochrome.in | support@gochrome.in | +91 8977160428</div>
           </div>
         </div>
       </div>

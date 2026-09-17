@@ -62,14 +62,14 @@ function PaymentFailed() {
             <h2 className="font-semibold">What you can do now</h2>
             <div className="mt-3 space-y-3 text-sm text-muted-foreground">
               <p className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />Try the payment again, or use another payment method.</p>
-              <p className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />If money was deducted, please do not pay again until our team checks it.</p>
+              <p className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />If money was deducted, it will be refunded automatically.</p>
               <p className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />Send us your order or payment ID and we will help as quickly as possible.</p>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <a href={`https://wa.me/${supportPhone}?text=${whatsappMessage}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700"><MessageCircle className="h-4 w-4" />WhatsApp</a>
-            <a href={`https://mail.google.com/mail/u/0/?to=${supportEmail}&subject=${emailSubject}&body=${emailBody}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Mail className="h-4 w-4" />Email us</a>
+            <a href={`https://mail.google.com/${supportEmail}&subject=${emailSubject}&body=${emailBody}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Mail className="h-4 w-4" />Email us</a>
             <a href="https://www.instagram.com/gochrome.in/" target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-muted"><Instagram className="h-4 w-4" />Instagram</a>
           </div>
 
