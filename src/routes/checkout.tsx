@@ -420,7 +420,7 @@ function Checkout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total * 100,
+          items: items.map((item) => ({ id: item.id, qty: item.qty })),
           receipt: orderId,
           notes: {
             orderId,
@@ -447,43 +447,36 @@ function Checkout() {
       }
 
       const paymentHandler = async (response: RazorpayResponse) => {
-        const verifyResponse = await fetch("/api/verify-razorpay-payment", {
+        const completeResponse = await fetch("/api/complete-razorpay-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(response),
+          body: JSON.stringify({
+            ...response,
+            orderId,
+            items: items.map((item) => ({ id: item.id, qty: item.qty })),
+            customer: {
+              customerName,
+              email: String(data.get("email") || ""),
+              phone: String(data.get("phone") || ""),
+              streetAddress: String(data.get("streetAddress") || ""),
+              city: String(data.get("city") || ""),
+              state: String(data.get("state") || ""),
+              pinCode: String(data.get("pinCode") || ""),
+            },
+          }),
         });
 
-        if (!verifyResponse.ok) {
+        if (!completeResponse.ok) {
+          const errorData = await completeResponse.json().catch(() => ({}));
           setLoading(false);
-          toast.error("Payment verification failed. Check RAZORPAY_KEY_SECRET in Vercel.");
+          toast.error(errorData.error || "Payment verification failed. The order was not recorded.");
           return;
         }
 
-        try {
-          await saveToGoogleSheets({
-            type: "order",
-            orderId,
-            paymentId: response.razorpay_payment_id,
-            razorpayOrderId: response.razorpay_order_id || razorpayOrder.id,
-            paymentStatus: "paid",
-            customerName,
-            email: data.get("email"),
-            phone: data.get("phone"),
-            streetAddress: data.get("streetAddress"),
-            city: data.get("city"),
-            state: data.get("state"),
-            pinCode: data.get("pinCode"),
-            items: items.map((item) => ({
-              id: item.id,
-              name: item.name,
-              portType: (item as any).portType ?? "",
-              qty: item.qty,
-              price: item.price,
-              lineTotal: item.price * item.qty,
-            })),
-            total,
-          });
+        const completed = (await completeResponse.json()) as { record: { total: number; items: unknown[] } };
+        const verifiedTotal = completed.record.total;
 
+        try {
           const orderPayload = {
             orderId,
             paymentId: response.razorpay_payment_id,
@@ -496,15 +489,8 @@ function Checkout() {
             city: String(data.get("city") || ""),
             state: String(data.get("state") || ""),
             pinCode: String(data.get("pinCode") || ""),
-            items: items.map((item) => ({
-              id: item.id,
-              name: item.name,
-              portType: (item as any).portType ?? "",
-              qty: item.qty,
-              price: item.price,
-              lineTotal: item.price * item.qty,
-            })),
-            total,
+            items: completed.record.items,
+            total: verifiedTotal,
             date: new Date().toISOString(),
           };
 

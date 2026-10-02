@@ -1,3 +1,5 @@
+import { priceOrder } from "./_order-pricing.js";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -12,7 +14,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { amount, receipt, notes } = req.body || {};
+    const { items, receipt, notes } = req.body || {};
+    const pricedOrder = priceOrder(items);
+    const amount = pricedOrder.total * 100;
     const razorpayResponse = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
       headers: {
@@ -23,7 +27,7 @@ export default async function handler(req, res) {
         amount,
         currency: "INR",
         receipt,
-        notes,
+        notes: { ...(notes || {}), serverTotal: String(pricedOrder.total) },
       }),
     });
 
@@ -33,8 +37,10 @@ export default async function handler(req, res) {
       return res.status(razorpayResponse.status).json(data);
     }
 
-    return res.status(200).json(data);
+    return res
+      .status(200)
+      .json({ ...data, serverItems: pricedOrder.items, serverTotal: pricedOrder.total });
   } catch (error) {
-    return res.status(500).json({ error: String(error) });
+    return res.status(error.statusCode || 500).json({ error: error.message || String(error) });
   }
 }

@@ -11,6 +11,9 @@ const SPREADSHEET_ID = "PASTE_YOUR_GOOGLE_SHEET_ID_HERE";
 const CONTACT_SHEET_NAME = "Contact Responses";
 const ORDERS_SHEET_NAME = "Orders";
 const ERROR_SHEET_NAME = "Errors";
+// Store the same random value as Vercel's ORDERS_SHEETS_WRITE_TOKEN.
+// This prevents unauthenticated callers from inserting fake paid orders.
+const ORDERS_WRITE_TOKEN = "PASTE_A_LONG_RANDOM_TOKEN_HERE";
 
 function doGet() {
   try {
@@ -33,6 +36,9 @@ function doPost(e) {
     if (data.type === "contact") {
       appendContact(spreadsheet, data);
     } else if (data.type === "order") {
+      if (!data.writeToken || data.writeToken !== ORDERS_WRITE_TOKEN) {
+        throw new Error("Unauthorized order write");
+      }
       appendOrder(spreadsheet, data);
     } else {
       throw new Error("Unknown submission type");
