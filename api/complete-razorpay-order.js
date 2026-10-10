@@ -47,7 +47,8 @@ export default async function handler(req, res) {
       items: priced.items,
       total: priced.total,
       submittedAt: new Date().toISOString(),
-      source: "server-payment-verification",
+      source: "https://gochrome.in/checkout",
+      verificationSource: "server-payment-verification",
       writeToken,
     };
 
@@ -56,10 +57,17 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(record),
     });
-    if (!sheetResponse.ok)
-      throw new Error("Payment verified, but the order could not be recorded.");
-    const sheetResult = await sheetResponse.json().catch(() => null);
-    if (!sheetResult?.ok) throw new Error("Payment verified, but the order could not be recorded.");
+    const sheetBody = await sheetResponse.text();
+    let sheetResult = null;
+    try {
+      sheetResult = JSON.parse(sheetBody);
+    } catch (_) {
+      // Apps Script should return JSON. Keep a safe diagnostic if it does not.
+    }
+    if (!sheetResponse.ok || !sheetResult?.ok) {
+      const reason = sheetResult?.error || `Apps Script returned HTTP ${sheetResponse.status}.`;
+      throw new Error(`Payment verified, but the order could not be recorded: ${reason}`);
+    }
 
     const { writeToken: _writeToken, ...safeRecord } = record;
     return res.status(200).json({ ok: true, record: safeRecord });

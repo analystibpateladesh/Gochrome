@@ -37,7 +37,7 @@ const productDetails = [
       <div className="space-y-4">
         <p>Meet the earbuds that refuse to blend in.</p>
         <p>
-          Meet the earphones that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
+          Meet the  that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
         </p>
         <p>
           These earphones are engineered to deliver clear vocals, balanced sound, and deep bass, making every song, video, and call sound crisp and immersive. The ergonomic shape sits comfortably in your ears for extended listening, while the lightweight design ensures they feel as good as they look.The durable cable and USB-C connector provide reliable compatibility with most modern smartphones, tablets, and laptops, so you can plug in and enjoy high-quality audio wherever you go.

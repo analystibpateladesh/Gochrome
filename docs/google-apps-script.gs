@@ -72,29 +72,38 @@ function appendContact(spreadsheet, data) {
 }
 
 function appendOrder(spreadsheet, data) {
-  const sheet = getSheet(spreadsheet, ORDERS_SHEET_NAME, [
-    "Submitted At",
-    "Order ID",
-    "Razorpay Order ID",
-    "Payment ID",
-    "Payment Status",
-    "Customer Name",
-    "Email",
-    "Phone",
-    "Street Address",
-    "City",
-    "State",
-    "PIN Code",
-    "Items",
-    "Total",
-    "Source",
-  ]);
+  const sheet = spreadsheet.getSheetByName(ORDERS_SHEET_NAME);
 
-  sheet.appendRow([
+  if (!sheet) {
+    throw new Error("Orders sheet was not found.");
+  }
+
+  const items = Array.isArray(data.items) ? data.items : [];
+  const quantity = items.reduce(function (sum, item) {
+    return sum + Number(item.qty || 0);
+  }, 0);
+
+  const productType = items
+    .map(function (item) {
+      return item.portType || "";
+    })
+    .filter(Boolean)
+    .join(" + ");
+
+  const source =
+    data.source && data.source !== "server-payment-verification"
+      ? data.source
+      : "https://gochrome.in/checkout";
+
+  const verificationSource =
+    data.verificationSource || "server-payment-verification";
+
+  const rowNumber = sheet.getLastRow() + 1;
+
+  // Write only columns A through P. These match the existing Orders sheet.
+  sheet.getRange(rowNumber, 1, 1, 16).setValues([[
     data.submittedAt || new Date().toISOString(),
     data.orderId || "",
-    data.razorpayOrderId || "",
-    data.paymentId || "",
     data.paymentStatus || "",
     data.customerName || "",
     data.email || "",
@@ -103,10 +112,16 @@ function appendOrder(spreadsheet, data) {
     data.city || "",
     data.state || "",
     data.pinCode || "",
-    JSON.stringify(data.items || []),
+    JSON.stringify(items),
     data.total || "",
-    data.source || "",
-  ]);
+    data.paymentId || "",
+    data.razorpayOrderId || "",
+    data.productType || productType,
+    source,
+  ]]);
+
+  // Column T only. Columns Q-S and U onward remain untouched.
+  sheet.getRange(rowNumber, 20).setValue(verificationSource);
 }
 
 function getSheet(spreadsheet, name, headers) {

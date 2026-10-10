@@ -84,6 +84,7 @@ function Shop() {
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
   const [selectedPort, setSelectedPort] = useState("type-c");
+  const outOfStockPorts = ["jack"];
   const { add } = useCart();
   const nav = useNavigate();
 
@@ -130,15 +131,16 @@ const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProdu
 const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
 const selectedQty = selectedBundle === "buy2" ? 2 : 1;
 const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-const selectedUnitPrice = selectedTotal / selectedQty;
-const isMixedPair = selectedPort === "type-c-lightning";
+  const selectedUnitPrice = selectedTotal / selectedQty;
+  const isSoldOutOption = outOfStockPorts.includes(selectedPort);
+  const isMixedPair = selectedPort === "type-c-lightning";
 const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
 const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
 const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
 
 const portLabel: Record<string, string> = {
   "type-c": "Type-C",
-  "jack": "3.5mm",
+  "jack": "3.5mm / Jack",
   "lightning": "Lightning",
   "type-c-lightning": "Type-C + Lightning",
 };
@@ -150,15 +152,18 @@ const selectedItem = {
     : `${featured.name} (${portLabel[selectedPort]})`,
   price: selectedUnitPrice,
   image: featured.image,
+  isSoldOut: isSoldOutOption,
   portType: portLabel[selectedPort],
 };
 
   const handleAddToBag = () => {
+    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
     toast.success("Added to bag");
   };
 
   const handleBuyNow = () => {
+    if (isSoldOutOption) return;
     add(selectedItem, selectedQty);
     toast.success("Added to bag. Proceeding to checkout...");
     nav({ to: "/checkout" });
@@ -240,13 +245,18 @@ const selectedItem = {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="type-c">USB type-C</SelectItem>
-                  <SelectItem value="jack">3.5mm</SelectItem>
+                   <SelectItem value="jack">3.5mm / Jack</SelectItem>
                   <SelectItem value="lightning">Lightning</SelectItem>
                   <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <div className="mt-8 space-y-3">
+             </div>
+             {isSoldOutOption && (
+               <p className="mt-4 text-sm font-medium text-red-500">
+                 Out of stock : we're restocking soon, you'll be notified.
+               </p>
+             )}
+             <div className="mt-8 space-y-3">
               <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
                 <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} disabled={isMixedPair} className="h-4 w-4 disabled:opacity-50" />
                 <div className="ml-4 min-w-0 flex-1">
@@ -271,10 +281,10 @@ const selectedItem = {
               </label>
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button onClick={handleBuyNow} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
+              <button onClick={handleBuyNow} disabled={isSoldOutOption} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
   {"Buy Now"}
 </button>
-<button onClick={handleAddToBag} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent">
+ <button onClick={handleAddToBag} disabled={isSoldOutOption} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50">
   {"Add to Cart"}
 </button>
             </div>
