@@ -152,7 +152,7 @@ function Shop() {
   const imageFilter = selectedColorHasDedicatedImages ? "none" : selectedColorData.filter;
   const media = [
     ...selectedColorImages.map(src => ({ type: "image" as const, src, filter: imageFilter })),
-    { type: "video" as const, src: video },
+    ...(selectedColor === "silver" ? [{ type: "video" as const, src: video }] : []),
   ];
   const buyOneSelection: Selection = { color: selectedColor, port: selectedPort };
   const buyOnePrice = getBundlePrice([buyOneSelection]);
