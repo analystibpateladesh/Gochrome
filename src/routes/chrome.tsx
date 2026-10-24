@@ -163,6 +163,9 @@ function Shop() {
   const isSoldOutOption = selectedBundle === "buy2"
     ? buyTwoSelections.some(selection => isSoldOutPort(selection.port))
     : isSoldOutPort(selectedPort);
+  const isComingSoon = selectedBundle === "buy2"
+    ? buyTwoSelections.some(selection => selection.color !== "silver")
+    : selectedColor !== "silver";
   const updateBuyTwo = (index: 0 | 1, key: keyof Selection, value: string) => {
     setBuyTwoSelections(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value, ...(key === "color" && value !== "silver" ? { port: "type-c" } : {}) } : item) as [Selection, Selection]);
   };
@@ -186,7 +189,7 @@ const selectedItem = {
   };
 
   const handleBuyNow = () => {
-    if (isSoldOutOption) return;
+    if (isSoldOutOption || isComingSoon) return;
     add(selectedItem, selectedQty);
     toast.success("Added to bag. Proceeding to checkout...");
     nav({ to: "/checkout" });
@@ -338,9 +341,9 @@ const selectedItem = {
               </p>
             )}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button onClick={handleBuyNow} disabled={isSoldOutOption} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
-  {"Buy Now"}
-</button>
+              <button onClick={handleBuyNow} disabled={isSoldOutOption || isComingSoon} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
+                {isComingSoon ? "Coming Soon" : "Buy Now"}
+              </button>
  <button onClick={handleAddToBag} disabled={isSoldOutOption} className="flex-1 px-8 py-4 rounded-full border border-border font-semibold hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50">
   {"Add to Cart"}
 </button>
