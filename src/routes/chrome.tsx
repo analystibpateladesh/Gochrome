@@ -9,7 +9,6 @@ import jack from "@/assets/2.png";
 import a from "@/assets/3.png";
 import b from "@/assets/4.png";
 import c from "@/assets/5.jpg";
-import goldFourth from "@/assets/gold.png";
 import video from "@/assets/chrome_video.mp4";
 import { type ReactNode, useState, useEffect } from "react";
 import {
@@ -84,17 +83,40 @@ const colors: Array<{ value: Color; label: string; swatch: string; filter: strin
 
 const portLabels: Record<Port, string> = { "type-c": "Type-C", lightning: "Lightning", jack: "3.5 mm" };
 const basePrice: Record<Color, number> = { silver: 799, gold: 899, pink: 899 };
-const mediaSources = [single, jack, a, b, c, video];
+const silverImages = [single, jack, a, b, c];
+const numberedSilverImages = import.meta.glob<string>("@/assets/[0-9]*silver.{png,jpg,jpeg}", {
+  eager: true,
+  import: "default",
+});
+const goldImages = import.meta.glob<string>("@/assets/[0-9]*gold.{png,jpg,jpeg}", {
+  eager: true,
+  import: "default",
+});
+const pinkImages = import.meta.glob<string>("@/assets/[0-9]*pink.{png,jpg,jpeg}", {
+  eager: true,
+  import: "default",
+});
+
+function getNumberedImages(images: Record<string, string>) {
+  return Object.entries(images)
+    .sort(([firstPath], [secondPath]) => {
+      const firstNumber = Number(firstPath.match(/\/(\d+)(?:silver|gold|pink)\./i)?.[1] ?? 0);
+      const secondNumber = Number(secondPath.match(/\/(\d+)(?:silver|gold|pink)\./i)?.[1] ?? 0);
+      return firstNumber - secondNumber;
+    })
+    .map(([, src]) => src);
+}
+
+const dedicatedColorImages = {
+  silver: getNumberedImages(numberedSilverImages),
+  gold: getNumberedImages(goldImages),
+  pink: getNumberedImages(pinkImages),
+};
 const getMediaSources = (color: Color) => {
-  const images = [...mediaSources];
+  if (dedicatedColorImages[color].length > 0) return dedicatedColorImages[color];
+  if (color === "silver") return silverImages;
 
-  if (color === "gold") {
-    images[3] = goldFourth;
-  } else if (color === "pink") {
-    images[3] = goldFourth;
-  }
-
-  return images;
+  return [single, jack, a, goldFourth, c];
 };
 
 function getUnitPrice(selection: Selection) {
@@ -125,7 +147,13 @@ function Shop() {
   const nav = useNavigate();
 
   const selectedColorData = colors.find(color => color.value === selectedColor) ?? colors[0];
-  const media = mediaSources.map(src => ({ type: "image" as const, src, filter: selectedColorData.filter }));
+  const selectedColorImages = getMediaSources(selectedColor);
+  const selectedColorHasDedicatedImages = dedicatedColorImages[selectedColor].length > 0;
+  const imageFilter = selectedColorHasDedicatedImages ? "none" : selectedColorData.filter;
+  const media = [
+    ...selectedColorImages.map(src => ({ type: "image" as const, src, filter: imageFilter })),
+    { type: "video" as const, src: video },
+  ];
   const buyOneSelection: Selection = { color: selectedColor, port: selectedPort };
   const buyOnePrice = getBundlePrice([buyOneSelection]);
   const buyTwoPrice = getBundlePrice(buyTwoSelections);
@@ -150,6 +178,13 @@ function Shop() {
     api.on("select", onSelect);
     return () => api.off("select", onSelect);
   }, [api]);
+
+  useEffect(() => {
+    if (!api) return;
+
+    api.scrollTo(0);
+    setSelectedImage(0);
+  }, [api, selectedColor]);
 
   const handleThumbnailClick = (idx: number) => {
     if (api) {
@@ -197,7 +232,7 @@ const selectedItem = {
 
   return (
     <>
-      <PageHeader eyebrow="Shop" title="Chrome Earphones with UV Coating" />
+      <PageHeader eyebrow="Shop" title="Chrome Earphones" />
       <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
         <div className="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
           <div className="min-w-0">
@@ -266,7 +301,10 @@ const selectedItem = {
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Color: {selectedColorData.label}</label>
-              <div className="flex gap-3">{colors.map(color => <button key={color.value} type="button" aria-label={color.label} onClick={() => { setSelectedColor(color.value); if (color.value !== "silver") setSelectedPort("type-c"); }} className={`h-[76px] w-[76px] shrink-0 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${selectedColor === color.value ? "border-foreground" : "border-border"}`}><img src={mediaSources[0]} alt={color.label} className="h-full w-full object-contain" style={{ filter: color.filter }} /></button>)}</div>
+              <div className="flex gap-3">{colors.map(color => {
+                const colorHasDedicatedImages = dedicatedColorImages[color.value].length > 0;
+                return <button key={color.value} type="button" aria-label={color.label} onClick={() => { setSelectedColor(color.value); if (color.value !== "silver") setSelectedPort("type-c"); }} className={`h-[76px] w-[76px] shrink-0 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${selectedColor === color.value ? "border-foreground" : "border-border"}`}><img src={getMediaSources(color.value)[0]} alt={color.label} className="h-full w-full object-contain" style={{ filter: colorHasDedicatedImages ? "none" : color.filter }} /></button>;
+              })}</div>
             </div>
             <div className="mt-8 space-y-4">
               <label className={`relative block cursor-pointer rounded-lg border-2 p-5 transition-all ${selectedBundle === "buy1" ? "border-foreground shadow-sm" : "border-border hover:border-foreground/40"}`}>
@@ -286,7 +324,7 @@ const selectedItem = {
                     <p className="text-sm text-foreground">Choose your port type and color</p>
                     <div className="grid min-w-0 grid-cols-[48px_minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-3 sm:grid-cols-[48px_116px_174px]">
                       <div className="h-12 w-12 overflow-hidden rounded-md border border-border bg-white p-1">
-                        <img src={mediaSources[0]} alt={`${selectedColor} earphones`} className="h-full w-full object-contain" style={{ filter: selectedColorData.filter }} />
+                        <img src={selectedColorImages[0]} alt={`${selectedColor} earphones`} className="h-full w-full object-contain" style={{ filter: imageFilter }} />
                       </div>
                       <Select value={selectedPort} onValueChange={(value) => setSelectedPort(value as Port)}>
                         <SelectTrigger className="h-11 min-w-0 w-[93px] border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
@@ -319,7 +357,7 @@ const selectedItem = {
                     {buyTwoSelections.map((selection, index) => (
                       <div key={index} className="grid min-w-0 grid-cols-[48px_minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-3 sm:grid-cols-[48px_116px_174px]">
                         <div className="h-12 w-12 overflow-hidden rounded-md border border-border bg-white p-1">
-                          <img src={mediaSources[0]} alt={`${selection.color} earphones`} className="h-full w-full object-contain" style={{ filter: colors.find(color => color.value === selection.color)?.filter }} />
+                          <img src={getMediaSources(selection.color)[0]} alt={`${selection.color} earphones`} className="h-full w-full object-contain" style={{ filter: dedicatedColorImages[selection.color].length > 0 ? "none" : colors.find(color => color.value === selection.color)?.filter }} />
                         </div>
                         <Select value={selection.port} onValueChange={(value) => updateBuyTwo(index as 0 | 1, "port", value)}>
                           <SelectTrigger className="h-11 min-w-0 w-[93px] border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
