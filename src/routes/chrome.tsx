@@ -116,7 +116,7 @@ const getMediaSources = (color: Color) => {
   if (dedicatedColorImages[color].length > 0) return dedicatedColorImages[color];
   if (color === "silver") return silverImages;
 
-  return [single, jack, a, goldFourth, c];
+  return [single, jack, a, c];
 };
 
 function getUnitPrice(selection: Selection) {
@@ -204,6 +204,17 @@ function Shop() {
   const updateBuyTwo = (index: 0 | 1, key: keyof Selection, value: string) => {
     setBuyTwoSelections(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value, ...(key === "color" && value !== "silver" ? { port: "type-c" } : {}) } : item) as [Selection, Selection]);
   };
+  const selectColor = (color: Color) => {
+    setSelectedColor(color);
+    if (color !== "silver") setSelectedPort("type-c");
+    setBuyTwoSelections(current =>
+      current.map(selection => ({
+        ...selection,
+        color,
+        ...(color !== "silver" ? { port: "type-c" as const } : {}),
+      })) as [Selection, Selection],
+    );
+  };
 
 const selectedItem = {
   id: `${featured.id}-${selectedBundle}-${selectedColor}-${selectedPort}`,
@@ -232,29 +243,29 @@ const selectedItem = {
 
   return (
     <>
-      <PageHeader eyebrow="Shop" title="Chrome Earphones" />
-      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
+      <PageHeader eyebrow="Shop" title="Chrome Earphones" compact />
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
           <div className="min-w-0">
             <div className="relative aspect-square flex items-center justify-center bg-background p-3 sm:p-6">
               <Carousel className="w-full" setApi={setApi}>
                 <CarouselContent>
                   {media.map((item, idx) => (
-                    <CarouselItem key={idx}>
-                      <div className="flex items-center justify-center h-full">
+                    <CarouselItem key={idx} className="aspect-square">
+                      <div className="flex h-full w-full items-center justify-center">
                         {item.type === "image" ? (
                           <img
                             src={item.src}
                             alt={featured.name}
                             loading="lazy"
-                            className="w-[92%] h-[92%] object-contain"
+                            className="h-full w-full object-contain"
                             style={{ filter: item.filter }}
                           />
                         ) : (
                           <video
                             src={item.src}
                             controls
-                            className="w-[92%] h-[92%] object-contain"
+                            className="h-full w-full object-contain"
                             preload="metadata"
                           >
                             Your browser does not support the video tag.
@@ -293,7 +304,9 @@ const selectedItem = {
               {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-foreground text-foreground" />)}
               <span className="text-sm text-muted-foreground ml-2">Rated 4.9 (400 Reviews)</span>
             </div>
-            <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name} {selectedColor}/{portLabels[selectedPort]}</h1>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl">
+              {selectedColorData.label} {featured.name}
+            </h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
               <span className="text-lg text-muted-foreground line-through">₹{displayedMrp.toLocaleString("en-IN")}</span>
@@ -301,10 +314,29 @@ const selectedItem = {
             </div>
             <div className="mt-8">
               <label className="block text-sm font-medium mb-3">Color: {selectedColorData.label}</label>
-              <div className="flex gap-3">{colors.map(color => {
-                const colorHasDedicatedImages = dedicatedColorImages[color.value].length > 0;
-                return <button key={color.value} type="button" aria-label={color.label} onClick={() => { setSelectedColor(color.value); if (color.value !== "silver") setSelectedPort("type-c"); }} className={`h-[76px] w-[76px] shrink-0 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${selectedColor === color.value ? "border-foreground" : "border-border"}`}><img src={getMediaSources(color.value)[0]} alt={color.label} className="h-full w-full object-contain" style={{ filter: colorHasDedicatedImages ? "none" : color.filter }} /></button>;
-              })}</div>
+              <div className="flex gap-2">
+                {colors.map(color => {
+                  const colorHasDedicatedImages = dedicatedColorImages[color.value].length > 0;
+                  return (
+                    <button
+                      key={color.value}
+                      type="button"
+                      aria-label={color.label}
+                      onClick={() => selectColor(color.value)}
+                      className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${
+                        selectedColor === color.value ? "border-foreground" : "border-border"
+                      }`}
+                    >
+                      <img
+                        src={getMediaSources(color.value)[0]}
+                        alt={color.label}
+                        className="h-full w-full object-contain"
+                        style={{ filter: colorHasDedicatedImages ? "none" : color.filter }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="mt-8 space-y-4">
               <label className={`relative block cursor-pointer rounded-lg border-2 p-5 transition-all ${selectedBundle === "buy1" ? "border-foreground shadow-sm" : "border-border hover:border-foreground/40"}`}>
@@ -330,7 +362,10 @@ const selectedItem = {
                         <SelectTrigger className="h-11 min-w-0 w-[93px] border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
                         <SelectContent><SelectItem value="type-c">Type-C</SelectItem>{selectedColor === "silver" && <><SelectItem value="lightning">Lightning</SelectItem><SelectItem value="jack">3.5 mm</SelectItem></>}</SelectContent>
                       </Select>
-                      <Select value={selectedColor} onValueChange={(value) => { setSelectedColor(value as Color); if (value !== "silver") setSelectedPort("type-c"); }}>
+                      <Select value={selectedColor} onValueChange={(value) => {
+                        setSelectedColor(value as Color);
+                        if (value !== "silver") setSelectedPort("type-c");
+                      }}>
                         <SelectTrigger className="h-11 min-w-0 w-[93px] rounded-md border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
                         <SelectContent>{colors.map(color => <SelectItem key={color.value} value={color.value}>{color.label}</SelectItem>)}</SelectContent>
                       </Select>
