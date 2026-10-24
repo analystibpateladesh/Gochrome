@@ -776,7 +776,7 @@ function Checkout() {
                   className="flex-1 text-sm px-3 py-2 rounded-lg border border-border bg-background"
                 >
                   <option value="type-c">USB Type-C (₹799)</option>
-                  <option value="lightning">Lightning (₹899)</option>
+                  {/* <option value="lightning">Lightning (₹899)</option> */}
                 </select>
                 <button
                   type="button"
