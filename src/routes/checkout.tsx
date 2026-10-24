@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCart, type CartItem } from "@/lib/cart";
+import { useCart, computeLineTotal, type CartItem } from "@/lib/cart";
 import { saveToGoogleSheets } from "@/lib/google-sheets";
 import { isRazorpayConfigured, loadRazorpayCheckout, RAZORPAY_KEY_ID, type RazorpayPaymentFailedResponse, type RazorpayResponse } from "@/lib/razorpay";
 import { useState, useRef, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
@@ -26,6 +26,7 @@ const addPortPricing: Record<string, number> = {
   "jack": 799,
   "lightning": 899,
 };
+const colorPricing: Record<string, number> = { silver: 799, gold: 899, pink: 899 };
 const checkoutBundlePricing: Record<string, number> = {
   "type-c+type-c": 1449,
   "jack+jack": 1449,
@@ -70,6 +71,10 @@ function Checkout() {
 
   const hasPreOrders = items.some(item => item.isSoldOut);
   const hasRegularItems = items.some(item => !item.isSoldOut);
+  const chromeItemsForAdd = items.filter(item => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones"));
+  const canAddAnotherSilver = chromeItemsForAdd.length > 0 && chromeItemsForAdd.every(item =>
+    String(item.color || "silver").toLowerCase().split("+").every(color => color.trim() === "silver"),
+  );
 
   const setStreetAddress = (address: string) => {
     const streetInput = formRef.current?.elements.namedItem("streetAddress");
@@ -89,43 +94,55 @@ function Checkout() {
     return "";
   };
 
-  const toCheckoutBundle = (ports: string[], image: string): CartItem | null => {
+  const normalizeColor = (color = "") => {
+    const value = color.toLowerCase().trim();
+    return value === "gold" || value === "pink" ? value : "silver";
+  };
+
+  const getItemColors = (item: CartItem) => {
+    if (item.color?.includes("+")) return item.color.split("+").map(normalizeColor);
+    return Array.from({ length: item.qty }, () => normalizeColor(item.color));
+  };
+
+  const toCheckoutBundle = (ports: string[], image: string, colors: string[] = ["silver", "silver"]): CartItem | null => {
     if (ports.length !== 2) return null;
 
-    const sortedPorts = [...ports].sort();
-    const bundleKey = `${sortedPorts[0]}+${sortedPorts[1]}`;
-    const bundleTotal = checkoutBundlePricing[bundleKey];
-    const labels = sortedPorts.map(port => addPortLabel[port]);
+    const labels = ports.map(port => addPortLabel[port]);
+    const normalizedColors = colors.map(normalizeColor);
+    const isSilverTypeC = normalizedColors.every(color => color === "silver") && ports.every(port => port === "type-c");
+    const isSilverMixed = normalizedColors.every(color => color === "silver") && new Set(ports).size === 2;
+    const isMatchingColorPair = normalizedColors[0] === normalizedColors[1] && normalizedColors[0] !== "silver" && ports.every(port => port === "type-c");
+    const bundleTotal = isSilverTypeC ? 1449 : isSilverMixed ? 1549 : isMatchingColorPair ? 1698 : ports.reduce((sum, port, index) => sum + (normalizedColors[index] === "silver" && port === "lightning" ? 899 : colorPricing[normalizedColors[index]]), 0);
 
     if (!bundleTotal || labels.some(label => !label)) return null;
 
     return {
-      id: `chrome-pro-buy2-${bundleKey}`,
-      name: `Chrome Earphones (${labels.join(" + ")}) - Buy 2`,
+      id: `chrome-pro-buy2-${normalizedColors.join("-")}-${ports.join("-")}`,
+      name: `Chrome Earphones-${normalizedColors.map((color, index) => `${color}/${ports[index]}`).join("-")} - Buy 2`,
       price: bundleTotal / 2,
       image,
       qty: 2,
       isSoldOut: true,
       portType: labels.join(" + "),
+      color: normalizedColors.join(" + "),
     };
   };
 
   const toSingleCartItem = (item: CartItem): CartItem => {
-    const ports = item.portType?.split("+").map(port => normalizePort(port)).filter(Boolean) ?? [];
-    const port = ports.includes("type-c") ? "type-c" : ports[0] || normalizePort(item.portType || item.name) || "type-c";
+    const port = getItemPorts(item)[0] || "type-c";
+    const color = getItemColors(item)[0] || "silver";
     const label = addPortLabel[port] || "Type-C";
-
+    const price = color === "silver" && port === "lightning" ? 899 : colorPricing[color];
     return {
       ...item,
-      id: `chrome-pro-buy1-${port}`,
-      name: `Chrome Earphones (${label})`,
-      price: addPortPricing[port] || 799,
+      id: `chrome-pro-buy1-${color}-${port}`,
+      name: `Chrome Earphones-${color}/${port}`,
+      price,
       qty: 1,
+      color,
       portType: label,
     };
   };
-
-  const isChromeItem = (item: CartItem) => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones");
 
   const getItemPorts = (item: CartItem) => {
     if (item.portType?.includes("+")) {
@@ -136,15 +153,14 @@ function Checkout() {
     return Array.from({ length: item.qty }, () => port).filter(Boolean);
   };
 
-  const getPrimaryPort = (item: CartItem) => getItemPorts({ ...item, qty: 1 })[0] || "";
-
   const addChromePortToCart = (portToAdd: string) => {
     const chromeItems = items.filter(item => item.id.startsWith("chrome-pro") || item.name.includes("Chrome Earphones"));
     const otherItems = items.filter(item => !chromeItems.includes(item));
     const existingPorts = chromeItems.flatMap(getItemPorts);
     const nextPorts = [...existingPorts, portToAdd];
     const image = chromeItems[0]?.image || items[0]?.image || "";
-    const bundleItem = toCheckoutBundle(nextPorts, image);
+    const existingColors = chromeItems.flatMap(getItemColors);
+    const bundleItem = toCheckoutBundle(nextPorts, image, [...existingColors, normalizeColor(chromeItems[0]?.color)]);
 
     if (bundleItem) {
       replaceItems([...otherItems, bundleItem]);
@@ -165,15 +181,16 @@ function Checkout() {
 
   const handleItemQtyChange = (item: CartItem, nextQty: number) => {
     if (item.id.includes("buy2") && nextQty <= 1) {
-      replaceItems(items.map(cartItem => (cartItem.id === item.id ? toSingleCartItem(item) : cartItem)));
+      replaceItems(items.map(cartItem => cartItem.id === item.id ? toSingleCartItem(item) : cartItem));
       return;
     }
 
-    if (nextQty > item.qty && isChromeItem(item)) {
-      const port = getPrimaryPort(item);
-
-      if (port) {
-        addChromePortToCart(port);
+    if (item.id.includes("buy1") && nextQty >= 2) {
+      const port = getItemPorts(item)[0] || "type-c";
+      const color = getItemColors(item)[0] || "silver";
+      const bundleItem = toCheckoutBundle([port, port], item.image, [color, color]);
+      if (bundleItem) {
+        replaceItems(items.map(cartItem => cartItem.id === item.id ? bundleItem : cartItem));
         return;
       }
     }
@@ -183,6 +200,7 @@ function Checkout() {
 
   // Add another port type directly from checkout
   const handleAddAnother = () => {
+    if (!canAddAnotherSilver) return;
     addChromePortToCart(addPort);
   };
 
@@ -345,10 +363,11 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
-          portType: (item as any).portType ?? "",
+          color: item.color ?? "",
+          portType: item.portType ?? "",
           qty: item.qty,
           price: item.price,
-          lineTotal: item.price * item.qty,
+          lineTotal: computeLineTotal(item),
         })),
         total,
       });
@@ -368,10 +387,11 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
-          portType: (item as any).portType ?? "",
+          color: item.color ?? "",
+          portType: item.portType ?? "",
           qty: item.qty,
           price: item.price,
-          lineTotal: item.price * item.qty,
+          lineTotal: computeLineTotal(item),
         })),
         total,
         date: new Date().toISOString(),
@@ -609,10 +629,11 @@ function Checkout() {
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
-          portType: (item as any).portType ?? "",
+          color: item.color ?? "",
+          portType: item.portType ?? "",
           qty: item.qty,
           price: item.price,
-          lineTotal: item.price * item.qty,
+          lineTotal: computeLineTotal(item),
         })),
         total,
       });
@@ -629,7 +650,7 @@ function Checkout() {
         city: String(data.get("city") || ""),
         state: String(data.get("state") || ""),
         pinCode: String(data.get("pinCode") || ""),
-        items: items.map((item) => ({ id: item.id, name: item.name, portType: (item as any).portType ?? "", qty: item.qty, price: item.price, lineTotal: item.price * item.qty })),
+        items: items.map((item) => ({ id: item.id, name: item.name, color: item.color ?? "", portType: item.portType ?? "", qty: item.qty, price: item.price, lineTotal: computeLineTotal(item) })),
         total,
         date: new Date().toISOString(),
       };
@@ -723,6 +744,9 @@ function Checkout() {
                     <div className="flex items-start justify-between">
                       <p className="font-medium">{i.name}</p>
                     </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Color: {i.color || "Silver"} · Port: {i.portType || "Type-C"}
+                    </p>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="inline-flex items-center border border-border rounded-full">
                         <button type="button" onClick={() => handleItemQtyChange(i, i.qty - 1)} className="h-7 w-7 grid place-items-center" aria-label={`Decrease ${i.name} quantity`}>
@@ -738,13 +762,13 @@ function Checkout() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm">₹{(i.price * i.qty).toLocaleString("en-IN")}</p>
+                  <p className="text-sm">₹{computeLineTotal(i).toLocaleString("en-IN")}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 p-3 rounded-xl border border-dashed border-border">
-              <p className="text-xs font-medium mb-4">Add one more </p>
+            {canAddAnotherSilver && <div className="mt-4 p-3 rounded-xl border border-dashed border-border">
+              <p className="text-xs font-medium mb-4">Add one more (Silver Type-C / Lightning) </p>
               <div className="flex gap-2">
                 <select
                   value={addPort}
@@ -753,7 +777,6 @@ function Checkout() {
                 >
                   <option value="type-c">USB Type-C (₹799)</option>
                   <option value="lightning">Lightning (₹899)</option>
-                  <option value="jack">3.5mm / Jack (₹799)</option>
                 </select>
                 <button
                   type="button"
@@ -763,7 +786,7 @@ function Checkout() {
                   Add
                 </button>
               </div>
-            </div>
+            </div>}
 
             <div className="border-t border-border mt-5 pt-4 space-y-1.5 text-sm">
                 <div className="flex justify-between">

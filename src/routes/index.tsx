@@ -34,6 +34,7 @@ const faqs = [
   { q: "Is Cash on Delivery (COD) available?", a: "No, Cash on Delivery is not available. All orders must be paid online at checkout." },
   { q: "Are they comfortable to wear?", a: "Yes. Their lightweight open-ear design sits naturally in your ears and stays comfortable even during long listening sessions." },
   { q: "What if I receive a damaged product?", a: "Contact us within 48 hours of delivery with photos or videos, and we’ll help resolve the issue quickly." },
+  { q: "Does the chrome colour fade over time?", a: "Our earphones have a UV-coated chrome finish that helps keep the colour shiny and long-lasting. With proper care, the colour stays good for a long time. Avoid rough handling and strong chemicals to keep it looking new." },
 ];
 
 function Home() {
@@ -213,7 +214,8 @@ function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-6 py-32">
+      <section id="faqs" className="mx-auto max-w-3xl px-6 py-32">
+        
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground text-center">Questions</p>
         <h2 className="mt-3 text-4xl md:text-6xl font-semibold tracking-tight text-center">Frequently asked.</h2>
         <div className="mt-14 border-y border-border">

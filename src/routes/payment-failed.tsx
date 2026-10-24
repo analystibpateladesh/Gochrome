@@ -77,7 +77,7 @@ function PaymentFailed() {
             <Link to="/checkout" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"><RefreshCw className="h-4 w-4" />Try payment again</Link>
             <Link to="/chrome" className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-muted"><ArrowLeft className="h-4 w-4" />Continue shopping</Link>
           </div>
-          <p className="text-center text-xs text-muted-foreground">Support: {supportEmail} · +91 91405 79643</p>
+          <p className="text-center text-xs text-muted-foreground">Support: {supportEmail} · +91 8977160428</p>
         </div>
       </div>
     </section>

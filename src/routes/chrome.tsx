@@ -9,6 +9,7 @@ import jack from "@/assets/2.png";
 import a from "@/assets/3.png";
 import b from "@/assets/4.png";
 import c from "@/assets/5.jpg";
+import goldFourth from "@/assets/gold.png";
 import video from "@/assets/chrome_video.mp4";
 import { type ReactNode, useState, useEffect } from "react";
 import {
@@ -41,7 +42,7 @@ const productDetails = [
           Meet the earphones that were made to stand out. Finished in a stunning mirror-chrome design, GoChrome Chrome Earphones transform a simple everyday accessory into a bold style statement. The highly polished metallic surface reflects light from every angle, creating a futuristic look inspired by modern fashion and technology. But Chrome is more than just good looks.
         </p>
         <p>
-          These earphones are engineered to deliver clear vocals, balanced sound, and deep bass, making every song, video, and call sound crisp and immersive. The ergonomic shape sits comfortably in your ears for extended listening, while the lightweight design ensures they feel as good as they look.The durable cable and USB-C connector provide reliable compatibility with most modern smartphones, tablets, and laptops, so you can plug in and enjoy high-quality audio wherever you go.
+          These earphones are engineered to deliver clear vocals, balanced sound, and deep bass, making every song, video, and call sound crisp and immersive. The ergonomic shape sits comfortably in your ears for extended listening, while the lightweight design ensures they feel as good as they look.The durable cable and  connector provide reliable compatibility with most modern smartphones, tablets, and laptops, so you can plug in and enjoy high-quality audio wherever you go.
         </p>
         <p>Whether they're around your neck, in your hand, or plugged in on the go, these earbuds were made to be noticed.</p>
       </div>
@@ -71,31 +72,73 @@ const productDetails = [
   },
 ];
 
-const portPricing: Record<string, { buyOne: number; buyTwo: number; buyOneMrp: number; buyTwoMrp: number }> = {
-  "type-c": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3196 },
-  "lightning": { buyOne: 899, buyTwo: 1649, buyOneMrp: 1763, buyTwoMrp: 3926 },
-  "type-c-lightning": { buyOne: 799, buyTwo: 1549, buyOneMrp: 1598, buyTwoMrp: 3361 },
-  "jack": { buyOne: 799, buyTwo: 1449, buyOneMrp: 1598, buyTwoMrp: 3019 },
+type Color = "silver" | "gold" | "pink";
+type Port = "type-c" | "lightning" | "jack";
+type Selection = { color: Color; port: Port };
+
+const colors: Array<{ value: Color; label: string; swatch: string; filter: string }> = [
+  { value: "silver", label: "Silver", swatch: "#c7cbd1", filter: "none" },
+  { value: "gold", label: "Gold", swatch: "#d4a63b", filter: "sepia(0.75) saturate(1.8) hue-rotate(350deg)" },
+  { value: "pink", label: "Pink", swatch: "#e8a4b5", filter: "sepia(0.2) saturate(1.9) hue-rotate(295deg)" },
+];
+
+const portLabels: Record<Port, string> = { "type-c": "Type-C", lightning: "Lightning", jack: "3.5 mm" };
+const basePrice: Record<Color, number> = { silver: 799, gold: 899, pink: 899 };
+const mediaSources = [single, jack, a, b, c, video];
+const getMediaSources = (color: Color) => {
+  const images = [...mediaSources];
+
+  if (color === "gold") {
+    images[3] = goldFourth;
+  } else if (color === "pink") {
+    images[3] = goldFourth;
+  }
+
+  return images;
 };
 
+function getUnitPrice(selection: Selection) {
+  return selection.color === "silver" && selection.port === "lightning" ? 899 : basePrice[selection.color];
+}
+
+function getBundlePrice(selections: Selection[]) {
+  if (selections.length === 1) return getUnitPrice(selections[0]);
+  return selections.reduce((sum, selection) => sum + getUnitPrice(selection), 0) - 149;
+}
+
+function getBundleMrp(selections: Selection[]) {
+  return selections.reduce((sum, selection) => sum + basePrice[selection.color], 0);
+}
+
 function Shop() {
-  const [selectedBundle, setSelectedBundle] = useState("buy1");
+  const [selectedBundle, setSelectedBundle] = useState("buy2");
   const [selectedImage, setSelectedImage] = useState(0);
   const [openDetail, setOpenDetail] = useState("");
   const [api, setApi] = useState<any>();
-  const [selectedPort, setSelectedPort] = useState("type-c");
-  const outOfStockPorts = ["jack"];
+  const [selectedColor, setSelectedColor] = useState<Color>("silver");
+  const [selectedPort, setSelectedPort] = useState<Port>("type-c");
+  const [buyTwoSelections, setBuyTwoSelections] = useState<[Selection, Selection]>([
+    { color: "silver", port: "type-c" },
+    { color: "silver", port: "type-c" },
+  ]);
   const { add } = useCart();
   const nav = useNavigate();
 
-  const media = [
-    { type: "image", src: single },
-    { type: "image", src: jack },
-    { type: "image", src: a },
-    { type: "image", src: b },
-    { type: "image", src: c },
-    { type: "video", src: video },
-  ];
+  const selectedColorData = colors.find(color => color.value === selectedColor) ?? colors[0];
+  const media = mediaSources.map(src => ({ type: "image" as const, src, filter: selectedColorData.filter }));
+  const buyOneSelection: Selection = { color: selectedColor, port: selectedPort };
+  const buyOnePrice = getBundlePrice([buyOneSelection]);
+  const buyTwoPrice = getBundlePrice(buyTwoSelections);
+  const singleProductMrp = Math.round(buyOnePrice / 0.5);
+  const buyTwoMrp = Math.round(buyTwoPrice / 0.45);
+  const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
+  const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
+  const buyOneSavingsAmount = singleProductMrp - buyOnePrice;
+  const buyTwoSavingsAmount = buyTwoMrp - buyTwoPrice;
+  const selectedQty = selectedBundle === "buy2" ? 2 : 1;
+  const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
+  const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
+  const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
 
   useEffect(() => {
     if (!api) return;
@@ -114,46 +157,26 @@ function Shop() {
     }
   };
 
-const handlePortChange = (port: string) => {
-  setSelectedPort(port);
+  const isSoldOutPort = (port: Port) =>
+  port === "jack" || port === "lightning";
 
-  if (port === "type-c-lightning") {
-    setSelectedBundle("buy2");
-  }
-};
-
-const pricing = portPricing[selectedPort] ?? portPricing["type-c"];
-const buyOnePrice = pricing.buyOne;
-const buyTwoPrice = pricing.buyTwo;
-const singleProductMrp = pricing.buyOneMrp;
-const buyTwoMrp = pricing.buyTwoMrp;
-const buyOneSavings = Math.round(((singleProductMrp - buyOnePrice) / singleProductMrp) * 100);
-const buyTwoSavings = Math.round(((buyTwoMrp - buyTwoPrice) / buyTwoMrp) * 100);
-const selectedQty = selectedBundle === "buy2" ? 2 : 1;
-const selectedTotal = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-  const selectedUnitPrice = selectedTotal / selectedQty;
-  const isSoldOutOption = outOfStockPorts.includes(selectedPort);
-  const isMixedPair = selectedPort === "type-c-lightning";
-const displayedPrice = selectedBundle === "buy2" ? buyTwoPrice : buyOnePrice;
-const displayedMrp = selectedBundle === "buy2" ? buyTwoMrp : singleProductMrp;
-const displayedSavings = selectedBundle === "buy2" ? buyTwoSavings : buyOneSavings;
-
-const portLabel: Record<string, string> = {
-  "type-c": "Type-C",
-  "jack": "3.5mm / Jack",
-  "lightning": "Lightning",
-  "type-c-lightning": "Type-C + Lightning",
-};
+  const isSoldOutOption = selectedBundle === "buy2"
+    ? buyTwoSelections.some(selection => isSoldOutPort(selection.port))
+    : isSoldOutPort(selectedPort);
+  const updateBuyTwo = (index: 0 | 1, key: keyof Selection, value: string) => {
+    setBuyTwoSelections(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value, ...(key === "color" && value !== "silver" ? { port: "type-c" } : {}) } : item) as [Selection, Selection]);
+  };
 
 const selectedItem = {
-  id: `${featured.id}-${selectedBundle}-${selectedPort}`,
+  id: `${featured.id}-${selectedBundle}-${selectedColor}-${selectedPort}`,
   name: selectedBundle === "buy2"
-    ? `${featured.name} (${portLabel[selectedPort]}) - Buy 2`
-    : `${featured.name} (${portLabel[selectedPort]})`,
-  price: selectedUnitPrice,
-  image: featured.image,
+    ? `${featured.name}-${buyTwoSelections.map(item => `${item.color}/${item.port}`).join("-")} - Buy 2`
+    : `${featured.name}-${selectedColor}/${selectedPort}`,
+  price: displayedPrice / selectedQty,
+  image: media[0].src,
   isSoldOut: isSoldOutOption,
-  portType: portLabel[selectedPort],
+  portType: selectedBundle === "buy2" ? buyTwoSelections.map(item => portLabels[item.port]).join(" + ") : portLabels[selectedPort],
+  color: selectedBundle === "buy2" ? buyTwoSelections.map(item => item.color).join(" + ") : selectedColor,
 };
 
   const handleAddToBag = () => {
@@ -171,7 +194,7 @@ const selectedItem = {
 
   return (
     <>
-      <PageHeader eyebrow="Shop" title="Chrome Earphones" />
+      <PageHeader eyebrow="Shop" title="Chrome Earphones with UV Coating" />
       <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
         <div className="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
           <div className="min-w-0">
@@ -187,6 +210,7 @@ const selectedItem = {
                             alt={featured.name}
                             loading="lazy"
                             className="w-[92%] h-[92%] object-contain"
+                            style={{ filter: item.filter }}
                           />
                         ) : (
                           <video
@@ -216,7 +240,7 @@ const selectedItem = {
                   }`}
                 >
                   {item.type === "image" ? (
-                    <img src={item.src} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={item.src} alt={`View ${idx + 1}`} className="w-full h-full object-cover" style={{ filter: item.filter }} />
                   ) : (
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                       <span className="text-xs text-gray-600">Video</span>
@@ -231,55 +255,88 @@ const selectedItem = {
               {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-foreground text-foreground" />)}
               <span className="text-sm text-muted-foreground ml-2">Rated 4.9 (400 Reviews)</span>
             </div>
-            <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name}</h1>
+            <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight">{featured.name} {selectedColor}/{portLabels[selectedPort]}</h1>
             <div className="mt-6 flex flex-wrap items-baseline gap-2">
               <span className="text-3xl font-bold">₹{displayedPrice.toLocaleString("en-IN")}</span>
               <span className="text-lg text-muted-foreground line-through">₹{displayedMrp.toLocaleString("en-IN")}</span>
               <span className="text-sm font-semibold text-chrome">SAVE {displayedSavings}%</span>
             </div>
             <div className="mt-8">
-              <label className="block text-sm font-medium mb-3">Select Port Type</label>
-              <Select value={selectedPort} onValueChange={handlePortChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a port" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="type-c">USB type-C</SelectItem>
-                   <SelectItem value="jack">3.5mm / Jack</SelectItem>
-                  <SelectItem value="lightning">Lightning</SelectItem>
-                  <SelectItem value="type-c-lightning">1 Type-C + 1 Lightning</SelectItem>
-                </SelectContent>
-              </Select>
-             </div>
-             {isSoldOutOption && (
-               <p className="mt-4 text-sm font-medium text-red-500">
-                 Out of stock : we're restocking soon, you'll be notified.
-               </p>
-             )}
-             <div className="mt-8 space-y-3">
-              <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy1" ? "var(--chrome)" : "var(--border)" }}>
-                <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} disabled={isMixedPair} className="h-4 w-4 disabled:opacity-50" />
-                <div className="ml-4 min-w-0 flex-1">
-                  <p className="font-semibold">Buy 1 <span className="text-xs text-muted-foreground font-normal ml-2">MOST POPULAR</span></p>
-                  <p className="text-sm text-muted-foreground">You save {buyOneSavings}%</p>
+              <label className="block text-sm font-medium mb-3">Color: {selectedColorData.label}</label>
+              <div className="flex gap-3">{colors.map(color => <button key={color.value} type="button" aria-label={color.label} onClick={() => { setSelectedColor(color.value); if (color.value !== "silver") setSelectedPort("type-c"); }} className={`h-[76px] w-[76px] shrink-0 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${selectedColor === color.value ? "border-foreground" : "border-border"}`}><img src={mediaSources[0]} alt={color.label} className="h-full w-full object-contain" style={{ filter: color.filter }} /></button>)}</div>
+            </div>
+            <div className="mt-8 space-y-4">
+              <label className={`relative block cursor-pointer rounded-lg border-2 p-5 transition-all ${selectedBundle === "buy1" ? "border-foreground shadow-sm" : "border-border hover:border-foreground/40"}`}>
+                <input type="radio" name="bundle" value="buy1" checked={selectedBundle === "buy1"} onChange={(e) => setSelectedBundle(e.target.value)} className="absolute opacity-0" />
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-semibold">Buy 1 <span className="ml-2 rounded bg-red-50 px-2 py-1 text-xs font-normal text-red-500">SAVE ₹{buyOneSavingsAmount.toLocaleString("en-IN")}</span></p>
+                    <p className="mt-1 text-sm text-muted-foreground">You save {buyOneSavings}%</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
+                    <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold">₹{buyOnePrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{singleProductMrp.toLocaleString("en-IN")}</p>
-                </div>
+                {selectedBundle === "buy1" && (
+                  <div className="mt-5 space-y-3">
+                    <p className="text-sm text-foreground">Choose your port type and color</p>
+                    <div className="grid min-w-0 grid-cols-[48px_minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-3 sm:grid-cols-[48px_116px_174px]">
+                      <div className="h-12 w-12 overflow-hidden rounded-md border border-border bg-white p-1">
+                        <img src={mediaSources[0]} alt={`${selectedColor} earphones`} className="h-full w-full object-contain" style={{ filter: selectedColorData.filter }} />
+                      </div>
+                      <Select value={selectedPort} onValueChange={(value) => setSelectedPort(value as Port)}>
+                        <SelectTrigger className="h-11 min-w-0 w-[93px] border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
+                        <SelectContent><SelectItem value="type-c">Type-C</SelectItem>{selectedColor === "silver" && <><SelectItem value="lightning">Lightning</SelectItem><SelectItem value="jack">3.5 mm</SelectItem></>}</SelectContent>
+                      </Select>
+                      <Select value={selectedColor} onValueChange={(value) => { setSelectedColor(value as Color); if (value !== "silver") setSelectedPort("type-c"); }}>
+                        <SelectTrigger className="h-11 min-w-0 w-[93px] rounded-md border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
+                        <SelectContent>{colors.map(color => <SelectItem key={color.value} value={color.value}>{color.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
               </label>
-              <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" style={{ borderColor: selectedBundle === "buy2" ? "var(--chrome)" : "var(--border)" }}>
-                <input type="radio" name="bundle" value="buy2" checked={selectedBundle === "buy2"} onChange={(e) => setSelectedBundle(e.target.value)} className="h-4 w-4" />
-                <div className="ml-4 min-w-0 flex-1">
-                  <p className="font-semibold">Buy 2 <span className="text-xs text-muted-foreground font-normal ml-2">BEST DEAL</span></p>
-                  <p className="text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
+              <label className={`relative block cursor-pointer rounded-lg border-2 p-5 transition-all ${selectedBundle === "buy2" ? "border-foreground shadow-sm" : "border-border hover:border-foreground/40"}`}>
+                <input type="radio" name="bundle" value="buy2" checked={selectedBundle === "buy2"} onChange={(e) => setSelectedBundle(e.target.value)} className="absolute opacity-0" />
+                <span className="absolute right-5 top-0 -translate-y-1/2 rounded bg-black px-3 py-1 text-xs font-normal text-white">MOST POPULAR</span>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-semibold">Buy 2 <span className="ml-2 rounded bg-red-50 px-2 py-1 text-xs font-normal text-red-500">SAVE ₹{buyTwoSavingsAmount.toLocaleString("en-IN")}</span></p>
+                    <p className="mt-1 text-sm text-muted-foreground">You save {buyTwoSavings}%</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
+                    <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold">₹{buyTwoPrice.toLocaleString("en-IN")}</p>
-                  <p className="text-xs text-muted-foreground line-through">₹{buyTwoMrp.toLocaleString("en-IN")}</p>
-                </div>
+                {selectedBundle === "buy2" && (
+                  <div className="mt-5 space-y-3">
+                    <p className="text-sm text-foreground">Choose your port type and color</p>
+                    {buyTwoSelections.map((selection, index) => (
+                      <div key={index} className="grid min-w-0 grid-cols-[48px_minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-3 sm:grid-cols-[48px_116px_174px]">
+                        <div className="h-12 w-12 overflow-hidden rounded-md border border-border bg-white p-1">
+                          <img src={mediaSources[0]} alt={`${selection.color} earphones`} className="h-full w-full object-contain" style={{ filter: colors.find(color => color.value === selection.color)?.filter }} />
+                        </div>
+                        <Select value={selection.port} onValueChange={(value) => updateBuyTwo(index as 0 | 1, "port", value)}>
+                          <SelectTrigger className="h-11 min-w-0 w-[93px] border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="type-c">Type-C</SelectItem>{selection.color === "silver" && <><SelectItem value="lightning">Lightning</SelectItem><SelectItem value="jack">3.5 mm</SelectItem></>}</SelectContent>
+                        </Select>
+                        <Select value={selection.color} onValueChange={(value) => updateBuyTwo(index as 0 | 1, "color", value)}>
+                          <SelectTrigger className="h-11 min-w-0 w-[93px] rounded-md border border-border bg-background shadow-none [&>span]:line-clamp-none [&>span]:whitespace-normal"><SelectValue /></SelectTrigger>
+                          <SelectContent>{colors.map(color => <SelectItem key={color.value} value={color.value}>{color.label}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </label>
             </div>
+            {isSoldOutOption && (
+              <p className="mt-4 text-sm font-medium text-red-500">
+                Out of stock : Lightning and 3.5 mm are currently unavailable.
+              </p>
+            )}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={handleBuyNow} disabled={isSoldOutOption} className="flex-1 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
   {"Buy Now"}

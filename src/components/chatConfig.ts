@@ -95,7 +95,7 @@ export const FAQ_CONTENT: { key: string; label: string; answer: string }[] = [
     key: "contact_human",
     label: "Talk to a human",
     answer:
-      "(gochromeaudio@gmail.com / +91 91405 79643) - our team typically replies within a few hours.",
+      "(gochromeaudio@gmail.com / +91 8977160428) - our team typically replies within a few hours.",
   },
 ];
 

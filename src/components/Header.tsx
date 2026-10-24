@@ -10,8 +10,8 @@ const nav = [
   { to: "/chrome", label: "Store" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/waitlist", label: "GoChrome Waitlist" },
-  { to: "/track", label: "Track Order" }
+  { to: "/track", label: "Track Order" },
+  { to: "/#faqs", label: "FAQ" }
 ];
 
 export function Header() {

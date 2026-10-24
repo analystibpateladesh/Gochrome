@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCart, computeLineTotal, computeEffectiveUnitPrice } from "@/lib/cart";
+import { useCart, computeLineTotal, computeEffectiveUnitPrice, computeRegularUnitPrice } from "@/lib/cart";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/cart")({
@@ -31,8 +31,8 @@ function Cart() {
             <div className="flex-1">
               <p className="font-medium">{i.name}</p>
               <p className="text-sm text-muted-foreground">
-                ₹{i.price.toLocaleString("en-IN")}
-                {i.qty >= 2 && computeEffectiveUnitPrice(i) < i.price && (
+                ₹{computeRegularUnitPrice(i).toLocaleString("en-IN")}
+                {i.qty >= 2 && computeEffectiveUnitPrice(i) < computeRegularUnitPrice(i) && (
                   <span className="ml-2 text-xs text-primary">
                     2 for ₹{computeLineTotal({ ...i, qty: 2 }).toLocaleString("en-IN")}
                   </span>

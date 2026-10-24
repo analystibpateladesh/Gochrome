@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
 
 const cols = [
   { title: "Shop", links: [["/chrome","Chrome Earphones"],["/chrome","All Products"],["/chrome","Accessories"],["/cart","Cart"]] },
@@ -7,6 +8,14 @@ const cols = [
 ] as const;
 
 export function Footer() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+
+  const handleNewsletterSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    navigate({ to: "/waitlist" });
+  };
+
   return (
     <footer className="border-t border-border mt-24">
       <div className="mx-auto max-w-7xl px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-10">
@@ -47,6 +56,33 @@ export function Footer() {
               </svg>
             </a>
           </div>
+        </div>
+      </div>
+      <div className="border-t border-border">
+        <div className="mx-auto max-w-7xl px-6 py-10 sm:flex sm:items-center sm:justify-between sm:gap-8">
+          <div className="mb-5 sm:mb-0">
+            <h4 className="text-lg font-semibold tracking-tight">Join the GoChrome email list</h4>
+            <p className="mt-1 text-sm text-muted-foreground">Get updates on new launches and exclusive offers.</p>
+          </div>
+          <form onSubmit={handleNewsletterSubmit} className="flex w-full max-w-lg gap-2">
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={event => setEmail(event.target.value)}
+              placeholder="Enter your email"
+              aria-label="Email address"
+              autoComplete="email"
+              required
+              className="h-11 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none transition focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <button
+              type="submit"
+              className="h-11 shrink-0 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Join
+            </button>
+          </form>
         </div>
       </div>
       <div className="border-t border-border">
