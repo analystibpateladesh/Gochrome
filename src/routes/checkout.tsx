@@ -27,16 +27,6 @@ const addPortPricing: Record<string, number> = {
   "lightning": 899,
 };
 const colorPricing: Record<string, number> = { silver: 799, gold: 899, pink: 899 };
-const checkoutBundlePricing: Record<string, number> = {
-  "type-c+type-c": 1449,
-  "jack+jack": 1449,
-  "jack+type-c": 1449,
-  "lightning+lightning": 1649,
-  "jack+lightning": 1549,
-  "lightning+type-c": 1549,
-  "type-c+lightning": 1549,
-};
-
 type MapLocation = {
   address: string;
   latitude: number;
@@ -104,20 +94,23 @@ function Checkout() {
     return Array.from({ length: item.qty }, () => normalizeColor(item.color));
   };
 
+  const getChromeItemId = (bundleSize: 1 | 2, colors: string[], ports: string[]) =>
+    `chrome-pro-buy${bundleSize}-${ports.map((port, index) => `${colors[index] || "silver"}-${port}`).join("+")}`;
+
   const toCheckoutBundle = (ports: string[], image: string, colors: string[] = ["silver", "silver"]): CartItem | null => {
     if (ports.length !== 2) return null;
 
     const labels = ports.map(port => addPortLabel[port]);
     const normalizedColors = colors.map(normalizeColor);
-    const isSilverTypeC = normalizedColors.every(color => color === "silver") && ports.every(port => port === "type-c");
-    const isSilverMixed = normalizedColors.every(color => color === "silver") && new Set(ports).size === 2;
-    const isMatchingColorPair = normalizedColors[0] === normalizedColors[1] && normalizedColors[0] !== "silver" && ports.every(port => port === "type-c");
-    const bundleTotal = isSilverTypeC ? 1449 : isSilverMixed ? 1549 : isMatchingColorPair ? 1698 : ports.reduce((sum, port, index) => sum + (normalizedColors[index] === "silver" && port === "lightning" ? 899 : colorPricing[normalizedColors[index]]), 0);
+    const bundleTotal = ports.reduce(
+      (sum, port, index) => sum + (normalizedColors[index] === "silver" && port === "lightning" ? 899 : colorPricing[normalizedColors[index]]),
+      0,
+    ) - 149;
 
     if (!bundleTotal || labels.some(label => !label)) return null;
 
     return {
-      id: `chrome-pro-buy2-${normalizedColors.join("-")}-${ports.join("-")}`,
+      id: getChromeItemId(2, normalizedColors, ports),
       name: `Chrome Earphones-${normalizedColors.map((color, index) => `${color}/${ports[index]}`).join("-")} - Buy 2`,
       price: bundleTotal / 2,
       image,
@@ -135,7 +128,7 @@ function Checkout() {
     const price = color === "silver" && port === "lightning" ? 899 : colorPricing[color];
     return {
       ...item,
-      id: `chrome-pro-buy1-${color}-${port}`,
+      id: getChromeItemId(1, [color], [port]),
       name: `Chrome Earphones-${color}/${port}`,
       price,
       qty: 1,
@@ -169,7 +162,7 @@ function Checkout() {
     }
 
     add({
-      id: `chrome-pro-buy1-${portToAdd}`,
+      id: getChromeItemId(1, ["silver"], [portToAdd]),
       name: `Chrome Earphones (${addPortLabel[portToAdd]})`,
       price: addPortPricing[portToAdd],
       image: items[0]?.image ?? "",
@@ -440,7 +433,12 @@ function Checkout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({ id: item.id, qty: item.qty })),
+          items: items.map((item) => ({
+            id: item.id,
+            qty: item.qty,
+            color: item.color ?? "",
+            portType: item.portType ?? "",
+          })),
           receipt: orderId,
           notes: {
             orderId,
@@ -473,7 +471,12 @@ function Checkout() {
           body: JSON.stringify({
             ...response,
             orderId,
-            items: items.map((item) => ({ id: item.id, qty: item.qty })),
+            items: items.map((item) => ({
+              id: item.id,
+              qty: item.qty,
+              color: item.color ?? "",
+              portType: item.portType ?? "",
+            })),
             customer: {
               customerName,
               email: String(data.get("email") || ""),

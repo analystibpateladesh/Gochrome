@@ -217,7 +217,9 @@ function Shop() {
   };
 
 const selectedItem = {
-  id: `${featured.id}-${selectedBundle}-${selectedColor}-${selectedPort}`,
+  id: `chrome-pro-${selectedBundle}-${(selectedBundle === "buy2" ? buyTwoSelections : [buyOneSelection])
+    .map(selection => `${selection.color}-${selection.port}`)
+    .join("+")}`,
   name: selectedBundle === "buy2"
     ? `${featured.name}-${buyTwoSelections.map(item => `${item.color}/${item.port}`).join("-")} - Buy 2`
     : `${featured.name}-${selectedColor}/${selectedPort}`,
